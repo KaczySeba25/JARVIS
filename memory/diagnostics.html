@@ -1,0 +1,57 @@
+<!doctype html><meta charset='utf-8'><title>Jarvis diagnostics</title><style>body{font:16px system-ui;max-width:900px;margin:40px auto;background:#101318;color:#eee}pre{padding:20px;background:#1b212b;border-radius:8px;white-space:pre-wrap}</style><h1>Jarvis diagnostics</h1><pre>{
+  "goal": "smoke",
+  "started": 1791325630.3058794,
+  "stages": [
+    {
+      "name": "checkpoint",
+      "result": {
+        "label": "runtime_cycle",
+        "created": 1791325631.1465085,
+        "snapshot": "C:\\Jarvis\\memory\\snapshots\\20261006_232710_346940",
+        "available": true
+      }
+    },
+    {
+      "name": "plan",
+      "result": {
+        "goal": "smoke",
+        "plan": null,
+        "reason": "Requires task-specific reasoning; this helper does not invent an empty plan."
+      }
+    },
+    {
+      "name": "sandbox",
+      "result": {
+        "isolated": false,
+        "executed": false,
+        "reason": "No operating-system sandbox is configured.",
+        "target": "smoke"
+      }
+    },
+    {
+      "name": "regression",
+      "result": {
+        "target": "smoke",
+        "tests": [
+          "compile",
+          "contract",
+          "smoke",
+          "security"
+        ],
+        "regression_free": null,
+        "executed": false
+      }
+    },
+    {
+      "name": "verification",
+      "result": {
+        "verified": false,
+        "reason": "independent_evidence_required",
+        "review_required": true,
+        "goal": "smoke"
+      }
+    }
+  ],
+  "status": "review_required",
+  "finished": 1791325631.1465085
+}</pre>

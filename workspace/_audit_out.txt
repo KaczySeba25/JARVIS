@@ -1,0 +1,1659 @@
+{
+  "directory": "C:\\Jarvis\\skills",
+  "total": 122,
+  "passed": 122,
+  "review": 0,
+  "findings": [
+    {
+      "name": "adaptive_model_router",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "advanced_planner",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "adversarial_test_harness",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "agent_architect",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "agent_debugger",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "agent_learning_plan",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "agent_quality_gate",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "agent_test_harness",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "api_adapter_planner",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "api_contract_validator",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "api_discovery",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "audit_report",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "auto_recovery_handler",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "autonomy_status",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "autonomy_test",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "benchmark_runner",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "capability_audit",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "checkpoint_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "claim_provenance",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "code_tester",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": false,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak docstringa modułu."
+      ]
+    },
+    {
+      "name": "code_writer",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "context_compressor",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "conversation_summarizer",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "cost_budget_guard",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "cost_estimator",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "decision_simulator",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "deep_research",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "dependency_graph_builder",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "deployment_planner",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "diagnostic_dashboard",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "diagnostics_panel",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "doc_generator",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "emergency_stop",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "error_learning",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "error_memory",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "event_bus",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "evidence_reconciler",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "execution_report",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "experiment_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "file_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "hello",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": false,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak docstringa modułu.",
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "human_handoff_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "hypothesis_tracker",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "integration_diagnostics",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "intent_resolver",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "knowledge_expiry_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "knowledge_freshness",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "knowledge_graph_builder",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "knowledge_query",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "latency_optimizer",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "learning_loop",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "long_running_supervisor",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "maintenance",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "memory_forget",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "memory_get",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "memory_manage",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "memory_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "memory_save",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "model_status",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "monitoring_framework",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "multi_tenant_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "multimodal_document_pipeline",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "notification_router",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "notification_router_runtime",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "orchestration_designer",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "orchestration_validator",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "permission_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "plan_executor",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "plan_optimizer",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "privacy_redactor",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "project_analyzer",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "project_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "prompt_injection_firewall",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "provider_status",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "quality_check",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "queue_worker",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "rate_limit_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "readiness_audit",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "recovery_coordinator",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "regression_runner",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "regulatory_compliance_checker",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "resource_monitor",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "result_critic",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "result_verifier",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "resume_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "risk_assessor",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "rollback_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "rollback_orchestrator",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "runtime_cycle",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "sandbox_policy_engine",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "sandbox_runner",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "scenario_tests",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "secret_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "secret_request",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "secret_scanner",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "security_audit",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "self_improvement",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "self_verifier",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "semantic_memory",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "semantic_memory_retriever",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "skill_builder",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "skill_lifecycle",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "skill_version_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "source_quality_ranker",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "structured_output_validator",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "system_cmd",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "system_health",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "task_discovery",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "task_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "task_queue",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "test_suite_generator",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "uncertainty_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "universal_login",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "user_profile",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "vault_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "version_manager",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "vision",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": false,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak docstringa modułu."
+      ]
+    },
+    {
+      "name": "web_research",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": false,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak docstringa modułu."
+      ]
+    },
+    {
+      "name": "workflow_orchestrator",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": false,
+        "no_secret_literals": true
+      },
+      "warnings": [
+        "Brak lokalnej granicy obsługi wyjątków."
+      ]
+    },
+    {
+      "name": "workflow_scheduler",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "workspace_history",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    },
+    {
+      "name": "workspace_runner",
+      "status": "pass",
+      "score": 100,
+      "checks": {
+        "parseable": true,
+        "documented": true,
+        "run_entrypoint": true,
+        "error_boundary": true,
+        "no_secret_literals": true
+      },
+      "warnings": []
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+openai
+python-dotenv
+customtkinter
+requests
+beautifulsoup4
+pygame
+SpeechRecognition
+edge-tts
+supabase
+playwright
+pyautogui
+Pillow

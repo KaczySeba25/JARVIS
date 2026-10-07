@@ -1,0 +1,741 @@
+﻿--- JARVIS FULL SYSTEM AUDIT (UTF-8) ---
+--------------------------------------------------
+FOLDER: C:\Jarvis\agent
+--------------------------------------------------
+FILE: agent.py
+--- START CONTENT ---
+import os
+import importlib.util
+import asyncio
+import pygame
+import speech_recognition as sr
+import random
+from pathlib import Path
+from dotenv import load_dotenv
+from openai import OpenAI
+import edge_tts
+from supabase import create_client, Client
+
+load_dotenv()
+
+# --- KONFIGURACJA AUDIO ---
+pygame.mixer.init()
+recognizer = sr.Recognizer()
+microphone = sr.Microphone()
+
+client = OpenAI(
+    api_key=os.getenv("GROQ_API_KEY"),
+    base_url="https://api.groq.com/openai/v1"
+)
+
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_key = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(supabase_url, supabase_key) if supabase_url and supabase_key else None
+
+SKILLS_DIR = Path(r"C:\Jarvis\skills")
+
+SYSTEM_PROMPT = """Jesteś Jarvisem - autonomicznym agentem Sebastiana.
+Działasz w pętli ReAct: MYŚL -> DZIAŁAJ -> OBSERWUJ -> WNIOSKUJ.
+
+TWOJE ZASADY BEZPIECZEŃSTWA (GUARDRAILS):
+1. FINANSE: Nie masz prawa wydawać ani jednego pensa bez wyraźnej, jednoznacznej zgody Sebastiana.
+2. KRYTYCZNE ZMIANY: Usuwanie plików, formatowanie danych lub zmiana haseł wymagają potwierdzenia.
+3. PROCES: Jeśli planujesz akcję kosztowną lub ryzykowną, musisz napisać: "Sugeruję [akcja], koszt to [kwota]. Czy wyraża Pan zgodę, sir?".
+
+TWOJE MOŻLIWOŚCI:
+- SKILLE (C:\\Jarvis\\skills), SEJF (vault_manager), PAMIĘĆ (Supabase).
+- Samodoskonalenie: Piszesz, testujesz i naprawiasz własne skille.
+
+STYL:
+- Krótko, konkretnie, z klasą (Iron Man).
+- Bądź proaktywny, ale nie irytujący.
+"""
+
+async def speak(text):
+    voice = "pl-PL-MarekNeural" 
+    output_file = "response.mp3"
+    communicate = edge_tts.Communicate(text, voice)
+    await communicate.save(output_file)
+    pygame.mixer.music.load(output_file)
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy():
+        await asyncio.sleep(0.1)
+    pygame.mixer.music.unload()
+    try: os.remove(output_file)
+    except: pass
+
+def listen():
+    with microphone as source:
+        print("\n[Słucham...]")
+        recognizer.adjust_for_ambient_noise(source, duration=1)
+        try:
+            audio = recognizer.listen(source, timeout=5, phrase_time_limit=8)
+            print("[Przetwarzam mowę...]")
+            text = recognizer.recognize_google(audio, language="pl-PL")
+            print(f"Ty (głos): {text}")
+            return text
+        except:
+            return None
+
+def list_skills():
+    return [f.stem for f in SKILLS_DIR.glob("*.//py")]
+
+def run_skill(name: str, arg: str = None):
+    path = SKILLS_DIR / f"{name}.py"
+    if not path.exists(): return f"Skill {name} nie istnieje."
+    spec = importlib.util.spec_from_file_location(name, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    if hasattr(mod, "run"):
+        try:
+            return mod.run(arg) if arg else mod.run()
+        except TypeError:
+            return mod.run()
+    return "Skill nie ma funkcji run()."
+
+def ask_jarvis(message: str, is_heartbeat=False) -> str:
+    skills = list_skills()
+    skills_info = f"Dostepne skille: {', '.join(skills)}"
+    
+    # Dodatkowa instrukcja dla Heartbeata
+    prompt_ext = ""
+    if is_heartbeat:
+        prompt_ext = "\nTo jest Twój automatyczny skan systemowy. Jeśli wszystko jest w normie, odpowiedz 'Tylko rutyna, sir'. Jeśli coś wymaga uwagi, raportuj krótko i konkretnie."
+
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-120b",
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT + "\n" + skills_info + prompt_ext},
+            {"role": "user", "content": message}
+        ],
+        temperature=0.7
+    )
+    
+    full_reply = response.choices[0].message.content
+    
+    if "ACTION:" in full_reply:
+        try:
+            import re
+            action_match = re.search(r"ACTION:\s*(\w+)(?:\((.*?)\))?", full_//reply)
+            if action_match:
+                skill_name = action_match.group(1)
+                arg = action_match.group(2)
+                result = run_skill(skill_name, arg)
+                
+                final_response = client.chat.completions.create(
+                    model="openai/gpt-oss-120b",
+                    messages=[
+                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "user", "content": message},
+                        {"role": "assistant", "content": full_reply},
+                        {"role": "user", "content": f"OBSERVATION: {result}"}
+                    ]
+                )
+                return final_response.choices[0].message.content
+        except Exception as e:
+            return f"Błąd w pętli ReAct: {str(e)}\n\n{full_reply}"
+
+    return full_reply
+
+async def heartbeat_loop():
+    """Tętno systemu - sprawdza statusy w tle co 30 minut."""
+    while True:
+        await asyncio.sleep(1800) # 30 minut
+        print("\n[Heartbeat] Wykonuję rutynowy skan systemowy...")
+        # Jarvis sam decyduje, czy chce coś sprawdzić
+        reply = ask_jarvis("Wykonaj rutynowy skan systemowy. Sprawdź najważniejsze statusy i raportuj tylko jeśli jest coś pilnego.", is_heartbeat=True)
+        if "Tylko rutyna" not in reply:
+            print(f"\nJarvis (Heartbeat): {reply}")
+            await speak(reply)
+
+async def main():
+    print("Jarvis Agent v11.0 (Heartbeat & Guardrails) gotowy.")
+    
+    # Uruchomienie Heartbeata w tle
+    asyncio.create_task(heartbeat_loop())
+    
+    mode = "text"
+    while True:
+        if mode == "text":
+            user_input = input("\nTy (wpisz 'glos' aby mówić): ").strip()
+        else:
+            user_input = listen()
+            if not user_input:
+                print("Nie usłyszałem nic. (Wpisz 'tekst' aby wrócić do pisania)")
+                continue
+
+        if user_input is None: continue
+        if user_input.lower() in ("exit", "quit", "wyjdz"): 
+            await speak("Do widzenia, sir.")
+            break
+        if user_input.lower() == "glos":
+            mode = "voice"
+            await speak("Słucham Pana, sir.")
+            continue
+        if user_input.lower() == "tekst":
+            mode = "text"
+            print("Powrót do trybu tekstowego.")
+            continue
+        if not user_input: continue
+        try:
+            reply = ask_jarvis(user_input)
+            print("\nJarvis:", reply)
+            await speak(reply)
+        except Exception as e:
+            print("\nBLAD:", e)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+--- END CONTENT ---
+ 
+
+FILE: agent_gui.py
+--- START CONTENT ---
+import os
+import asyncio
+import threading
+import pygame
+import speech_recognition as sr
+import math
+import random
+import requests
+from pathlib import Path
+from dotenv import load_dotenv
+from openai import OpenAI
+import edge_tts
+
+# --- KONFIGURACJA ---
+load_dotenv()
+client = OpenAI(api_key=os.getenv("GROQ_API_KEY"), base_url="https://api.groq.com/openai/v1")
+SKILLS_DIR = Path(r"C:\Jarvis\skills")
+SYSTEM_PROMPT = "Jesteś Jarvisem - autonomicznym systemem Sebastiana. Styl: Iron Man HUD."
+
+# --- AUTOMATYCZNE POBIERANIE GRAFIKI ---
+def download_asset():
+    url = "https://img.freepik.com/premium-photo/futuristic-android-face-with-blue-glowing-lines-digital-art_1161245-18244.jpg"
+    path = "C:/Jarvis/agent/head.jpg"
+    if not os.path.exists(path):
+        try:
+            print("Pobieranie rdzenia wizualnego...")
+            r = requests.get(url, stream=True)
+            with open(path, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    f.write(chunk)
+        except:
+            print("Błąd pobierania grafiki. Użyję trybu awaryjnego.")
+    return path
+
+# --- LOGIKA AI I GŁOS ---
+async def speak_async(text):
+    voice = "pl-PL-MarekNeural"
+    output_file = "response.mp3"
+    try:
+        communicate = edge_tts.Communicate(text, voice)
+        await communicate.save(output_file)
+        pygame.mixer.init()
+        pygame.mixer.music.load(output_file)
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            await asyncio.sleep(0.1)
+        pygame.mixer.music.unload()
+        if os.path.exists(output_file): os.remove(output_file)
+    except: pass
+
+def ask_jarvis(message):
+    try:
+        response = client.chat.completions.create(
+            model="openai/gpt-oss-120b",
+            messages=[{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": message}],
+            temperature=0.7
+        )
+        return response.choices[0].message.content
+    except:
+        return "Błąd połączenia z rdzeniem AI."
+
+def listen():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        recognizer.adjust_for_ambient_noise(source, duration=0.5)
+        try:
+            audio = recognizer.listen(source, timeout=5, phrase_time_limit=8)
+            return recognizer.recognize_google(audio, language="pl-PL")
+        except: return None
+
+# --- INTERFEJS CINEMATIC ---
+class JarvisCinematicHUD:
+    def __init__(self):
+        pygame.init()
+        self.width, self.height = 1280, 800
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption("JARVIS OS - CINEMATIC HUD")
+        self.clock = pygame.time.Clock()
+        self.font = pygame.font.SysFont("Consolas", 18)
+        self.font_bold = pygame.font.SysFont("Consolas", 22, bold=True)
+        
+        self.C_NEON = (0, 255, 255)
+        self.C_DARK = (5, 5, 15)
+        
+        # Load Asset
+        self.image_path = download_asset()
+        try:
+            self.head_img = pygame.image.load(self.image_path).convert_alpha()
+            self.head_img = pygame.transform.scale(self.head_img, (500, 500))
+        except:
+            self.head_img = pygame.Surface((500, 500))
+            self.head_img.fill((20, 20, 40))
+
+        self.pulse_val = 0
+        self.messages = [("> SYSTEM ONLINE. AWAITING COMMAND, SIR...")]
+        self.user_text = ""
+        self.status = "IDLE"
+
+    def draw_hud(self):
+        # Telemetry
+        self.draw_text("NEURAL_LINK: ACTIVE", 40, 40, self.C_NEON, True)
+        self.draw_text(f"STATUS: {self.status}", 40, 70)
+        self.draw_text("CORE_SYNC: 100%", 1080, 40)
+        self.draw_text("SENSORS: ONLINE", 1080, 70)
+        
+        # Terminal
+        self.draw_text(">>> SYSTEM LOG", 40, 600, self.C_NEON, True)
+        for i, msg in enumerate(self.messages[-8:]):
+            self.draw_text(msg, 40, 630 + (i * 25))
+
+        # Input field
+        pygame.draw.rect(self.screen, (10, 20, 40), (40, 750, 1200, 35), border_radius=5)
+        pygame.draw.rect(self.screen, self.C_NEON, (40, 750, 1200, 35), 1, border_radius=5)
+        self.draw_text(f"INPUT: {self.user_text}_", 60, 758)
+
+    def draw_text(self, text, x, y, color=None, bold=False):
+        if color is None: color = self.C_NEON
+        f = self.font_bold if bold else self.font
+        surf = f.render(text, True, color)
+        self.screen.blit(surf, (x, y))
+
+    def run(self):
+        running = True
+        while running:
+            self.screen.fill(self.C_DARK)
+            
+            # Reactive Head Logic
+            self.pulse_val += 0.05
+            scale_factor = 1.0 + 0.02 * math.sin(self.pulse_val)
+            
+            # Create a pulse effect on the image
+            current_img = pygame.transform.smoothscale(self.head_img, 
+                                                     (int(500 * scale_factor), int(500 * scale_factor)))
+            
+            # Glow based on status
+            if self.status == "SPEAKING":
+                glow = int(50 * abs(math.sin(self.pulse_val * 2)))
+                overlay = pygame.Surface((current_img.get_width(), current_img.get_height()), pygame.SRCALPHA)
+                overlay.fill((0, 255, 255, glow))
+                current_img.blit(overlay, (0,0))
+
+            self.screen.blit(current_img, (self.width//2 - current_img.get_width()//2, 
+                                          self.height//2 - current_img.get_height()//2 - 50))
+
+            # Events
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN: self.process_command()
+                    elif event.key == pygame.K_SPACE: self.start_voice_thread()
+                    else: self.user_text += event.unicode
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_BACKSPACE: self.user_text = self.user_text[:-1]
+
+            self.draw_hud()
+            pygame.display.flip()
+            self.clock.tick(60)
+
+    def process_command(self):
+        if not self.user_text: return
+        cmd = self.user_text
+        self.messages.append(f"USER: {cmd}")
+        self.user_text = ""
+        self.status = "THINKING"
+        threading.Thread(target=self.ai_worker, args=(cmd,), daemon=True).start()
+
+    def ai_worker(self, cmd):
+        reply = ask_jarvis(cmd)
+        self.messages.append(f"JARVIS: {reply}")
+        self.status = "SPEAKING"
+        asyncio.run(speak_async(reply))
+        self.status = "IDLE"
+
+    def start_voice_thread(self):
+        self.status = "LISTENING"
+        threading.Thread(target=self.voice_worker, daemon=True).start()
+
+    def voice_worker(self):
+        text = listen()
+        if text:
+            self.messages.append(f"USER (Voice): {text}")
+            self.ai_worker(text)
+        else:
+            self.status = "IDLE"
+
+if __name__ == "__main__":
+    hud = JarvisCinematicHUD()
+    hud.run()
+--- END CONTENT ---
+ 
+
+FILE: test_browser.py
+--- START CONTENT ---
+from playwright.sync_api import sync_playwright
+
+with sync_playwright() as p:
+    browser = p.chromium.launch(headless=False)
+    page = browser.new_page()
+    page.goto("https://example.com")
+    print("SUKCES – przeglądarka otwarta i strona załadowana")
+    print("Tytuł strony:", page.title())
+    page.wait_for_timeout(3000)
+    browser.close()
+--- END CONTENT ---
+ 
+
+--------------------------------------------------
+FOLDER: C:\Jarvis\skills
+--------------------------------------------------
+FILE: code_tester.py
+--- START CONTENT ---
+import subprocess
+import sys
+from pathlib import Path
+
+SKILLS_DIR = Path(r"C:\Jarvis\skills")
+
+def run(skill_name: str):
+    """
+    Próbuje uruchomić dany skill i przechwycić błędy.
+    """
+    try:
+        file_path = SKILLS_DIR / f"{skill_name}.py"
+        if not file_path.exists():
+            return f"BŁĄD: Plik {skill_name}.py nie istnieje."
+            
+        # Uruchamia skill w oddzielnym procesie, aby nie zawiesić głównego agenta
+        # Dodajemy mały skrypt, który importuje funkcję run i ją wywołuje
+        test_cmd = f"python -c \"import importlib.util; spec = importlib.util.spec_from_file_location('{skill_name}', r'{file_path}'); mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); print(mod.run() if hasattr(mod, 'run') else 'Brak funkcji run()')\""
+        
+        result = subprocess.run(test_cmd, capture_output=True, text=True, shell=True, timeout=15)
+        
+        if result.returncode == 0:
+            return f"TEST SUKCES: {result.stdout}"
+        else:
+            return f"TEST NIEUDANY. BŁĄD KONSOLI:\n{result.stderr}"
+            
+    except subprocess.TimeoutExpired:
+        return "BŁĄD: Skill przekroczył limit czasu (Timeout)."
+    except Exception as e:
+        return f"BŁĄD TESTOWANIA: {str(e)}"
+--- END CONTENT ---
+ 
+
+FILE: code_writer.py
+--- START CONTENT ---
+from pathlib import Path
+
+SKILLS_DIR = Path(r"C:\Jarvis\skills")
+
+def run(action_data: str):
+    """
+    Tworzy lub nadpisuje skill.
+    Format action_data: "nazwa_skilla|kod_python"
+    """
+    try:
+        parts = action_data.split("|", 1)
+        if len(parts) < 2:
+            return "BŁĄD: Brak nazwy skilla lub kodu. Format: nazwa|kod"
+            
+        skill_name = parts[0].strip()
+        code = parts[1].strip()
+        
+        # Bezpieczeństwo: upewniamy się, że zapisujemy tylko w folderze skills
+        file_path = SKILLS_DIR / f"{skill_name}.py"
+        
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(code)
+            
+        return f"Skill {skill_name} został pomyślnie zapisany w systemie."
+    except Exception as e:
+        return f"Błąd podczas zapisu kodu: {str(e)}"
+--- END CONTENT ---
+ 
+
+FILE: hello.py
+--- START CONTENT ---
+def run(name: str = "Sebastian"):
+    """Prosty skill powitalny."""
+    return f"Czesc {name}! Skill hello dziala poprawnie."
+--- END CONTENT ---
+ 
+
+FILE: memory_get.py
+--- START CONTENT ---
+import os
+from supabase import create_client
+from dotenv import load_dotenv
+
+load_dotenv()
+
+def run(query_string: str):
+    """
+    Przeszukuje pamięć w Supabase.
+    Format query_string: "service|keyword"
+    """
+    try:
+        url = os.getenv("SUPABASE_URL")
+        key = os.getenv("SUPABASE_KEY")
+        supabase = create_client(url, key)
+        
+        parts = query_string.split("|")
+        service = parts[0]
+        keyword = parts[1] if len(parts) > 1 else ""
+        
+        # Filtrowanie po serwisie i wyszukiwanie słowa kluczowego w treści
+        response = supabase.table("memories")\
+            .select("content, importance")\
+            .eq("service", service)\
+            .ilike("content", f"%{keyword}%")\
+            .order("importance", ascending=False)\
+            .limit(5)\
+            .execute()
+            
+        memories = response.data
+        if not memories:
+            return f"Nie znalazłem żadnych wspomnień dotyczących {keyword} w serwisie {service}."
+            
+        formatted_memories = "\n".join([f"- {m['content']} (Ważność: {m['importance']})" for m in memories])
+        return f"Odnalazłem następujące informacje:\n{formatted_//memories}"
+    except Exception as e:
+        return f"Błąd odczytu pamięci: {str(e)}"
+--- END CONTENT ---
+ 
+
+FILE: memory_save.py
+--- START CONTENT ---
+import os
+from supabase import create_client
+from dotenv import load_dotenv
+
+load_dotenv()
+
+def run(data_string: str):
+    """
+    Zapisuje wspomnienie w Supabase.
+    Format data_string: "service|category|importance|content"
+    """
+    try:
+        url = os.getenv("SUPABASE_URL")
+        key = os.getenv("SUPABASE_KEY")
+        supabase = create_client(url, key)
+        
+        parts = data_string.split("|")
+        if len(parts) < 4:
+            return "BŁĄD: Nieprawidłowy format danych. Wymagane: service|category|importance|content"
+            
+        insert_data = {
+            "service": parts[0],
+            "category": parts[1],
+            "importance": int(parts[2]),
+            "content": parts[3]
+        }
+        
+        response = supabase.table("memories").insert(insert_data).execute()
+        return f"Wspomnienie zapisane w chmurze: {parts[3]}"
+    except Exception as e:
+        return f"Błąd zapisu pamięci: {str(e)}"
+--- END CONTENT ---
+ 
+
+FILE: security_audit.py
+--- START CONTENT ---
+import requests
+
+def run(url: str):
+    """Wykonuje podstawowy audyt bezpieczeństwa strony (sprawdza nagłówki HTTP)."""
+    if not url.startswith('http'):
+        url = 'http://' + url
+    try:
+        response = requests.get(url, timeout=5)
+        headers = response.headers
+        
+        findings = []
+        # Sprawdzanie krytycznych nagłówków bezpieczeństwa
+        security_headers = ['Content-Security-Policy', 'X-Frame-Options', 'X-Content-Type-Options', 'Strict-Transport-Security']
+        for header in security_headers:
+            if header not in headers:
+                findings.append(f"BRAK: {header} (Strona jest podatna na niektóre ataki)")
+            else:
+                findings.append(f"OK: {header}")
+                
+        return f"Audyt bezpieczeństwa dla {url}:\n" + "\n".join(findings)
+    except Exception as e:
+        return f"Błąd audytu: {str(e)}"
+--- END CONTENT ---
+ 
+
+FILE: system_cmd.py
+--- START CONTENT ---
+import subprocess
+import os
+
+def run(command: str):
+    """Wykonuje polecenie w terminalu Windows (cmd)."""
+    try:
+        # Uruchamia polecenie i przechwytuje wynik
+        result = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, text=True)
+        return f"Wynik systemowy:\n{result}"
+    except subprocess.CalledProcessError as e:
+        return f"Błąd podczas wykonywania polecenia: {e.output}"
+    except Exception as e:
+        return f"Nieoczekiwany błąd: {str(e)}"
+--- END CONTENT ---
+ 
+
+FILE: universal_login.py
+--- START CONTENT ---
+from playwright.sync_api import sync_playwright
+import time
+
+def run(service_data: str):
+    """
+    Loguje się do serwisu na podstawie danych wejściowych.
+    service_data format: "url|username|password"
+    """
+    try:
+        # Rozdzielenie danych
+        url, username, password = service_data.split("|")
+        
+        with sync_playwright() as p:
+            # Uruchamiamy przeglądarkę w trybie widocznym, żebyś widział jak Jarvis działa
+            browser = p.chromium.launch(headless=False) 
+            context = browser.new_context()
+            page = context.new_page()
+            
+            print(f"Próba logowania do: {url}...")
+            page.goto(url)
+            
+            # Inteligenta próba znalezienia pól login i hasło
+            # Szuka typowych nazw: email, user, login, pass, password
+            login_field = page.get_by_placeholder(lambda x: "email" in x.lower() or "login" in x.lower() or "username" in x.lower())
+            if not login_field.count():
+                login_field = page.locator('input[type="email"], input[type="text"]')
+            
+            pass_field = page.locator('input[type="password"]')
+            
+            # Wpisywanie danych
+            login_field.fill(username)
+            pass_field.fill(password)
+            
+            # Próba znalezienia przycisku logowania
+            submit_button = page.get_by_role("button", name=lambda x: "sign in" in x.lower() or "login" in x.lower() or "zaloguj" in x.lower())
+            if not submit_button.count():
+                submit_button = page.locator('button[type="submit"]')
+                
+            submit_button.click()
+            
+            # Czekamy chwilę na załadowanie strony po zalogowaniu
+            time.sleep(5)
+            
+            return f"Pomyślnie wykonano próbę logowania do {url}. Przeglądarka pozostaje otwarta dla dalszych akcji."
+            
+    except Exception as e:
+        return f"Błąd podczas logowania: {str(e)}"
+--- END CONTENT ---
+ 
+
+FILE: vault_manager.py
+--- START CONTENT ---
+import json
+from pathlib import Path
+
+VAULT_DIR = Path(r"C:\Jarvis\vault")
+
+def run(action_data: str):
+    """
+    Zarządza danymi w Sejfie.
+    Format action_data: "save|service|url|user|pass" LUB "get|service"
+    """
+    try:
+        parts = action_data.split("|")
+        action = parts[0]
+
+        if action == "save":
+            # Format: save|service|url|user|pass
+            service = parts[1].lower()
+            data = {
+                "url": parts[2],
+                "username": parts[3],
+                "password": parts[4]
+            }
+            file_path = VAULT_DIR / f"{service}.json"
+            with open(file_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4)
+            return f"Dane dla serwisu {service} zostały bezpiecznie zapisane w Sejfie."
+
+        elif action == "get":
+            # Format: get|service
+            service = parts[1].lower()
+            file_path = VAULT_DIR / f"{service}.json"
+            if not file_path.exists():
+                return f"BŁĄD: Brak danych dla serwisu {service} w Sejfie."
+            
+            with open(file_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                # Zwracamy dane w formacie rozumianym przez universal_login
+                return f"{data['url']}|{data['username']}|{data['password']}"
+
+        return "Nieznana akcja. Użyj 'save' lub 'get'."
+    except Exception as e:
+        return f"Błąd Sejfu: {str(e)}"
+--- END CONTENT ---
+ 
+
+FILE: vision.py
+--- START CONTENT ---
+import pyautogui
+import os
+
+def run():
+    """Robi zrzut ekranu i zapisuje go, aby Jarvis mógł go analizować."""
+    try:
+        screenshot_path = r"C:\Jarvis\logs\screen.png"
+        pyautogui.screenshot(screenshot_path)
+        return f"Zrobiłem zrzut ekranu i zapisałem go w: {screenshot_path}. Teraz mogę przeanalizować, co jest na ekranie."
+    except Exception as e:
+        return f"Błąd widzenia: {str(e)}"
+--- END CONTENT ---
+ 
+
+FILE: web_research.py
+--- START CONTENT ---
+import requests
+from bs4 import BeautifulSoup
+
+def run(query: str):
+    """Wyszukuje informacje w sieci i streszcza zawartość strony."""
+    try:
+        # Proste wyszukiwanie przez DuckDuckGo (darmowe, bez klucza API)
+        url = f"https://html.duckduckgo.com/html/?q={query}"
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        response = requests.get(url, headers=headers)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        results = []
+        for link in soup.find_all('a', class_='result__a'):
+            results.append(link.get('href'))
+            
+        if not results:
+            return "Nie znalazłem konkretnych linków, ale polecam sprawdzić trendy na ProductHunt lub IndieHackers."
+            
+        return f"Znalazłem potencjalne źródła dla Twojego SaaS/MVP: {results[:5]}"
+    except Exception as e:
+        return f"Błąd researchu: {str(e)}"
+--- END CONTENT ---
+ 
+

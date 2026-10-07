@@ -1,0 +1,29 @@
+Postaram sie opisać najlepiej jak potrafię moimi słowami jak chce żeby Jarvis działał patrząc z mojej perspektywy. Spróbuje powiedziec Ci jak to ma wygladac w teorii i praktyce oraz podam kilka przykladow przy opisywaniu dzialania.
+
+A wiec niestety ale najwazniejsze wszystko ma narazie dzialac bez zadnych oplat poniewaz niemam pieniedzy i jestem bezrobotny w UK.
+
+Jak chce uruchamiac Jarvisa i z nim rozmawiac:
+
+na przyklad wlaczam laptopa i klikam w ikone na pulpicie i otwiera mi sie caly jarvis on do mnie pisze i jednoczesnie mowi a ja do niego moge mowic lub pisac.
+
+wyglad to cos mniej wiecej glowa taka cyfrowa ktora sie rusza jak mowi zeby to realnie wygladalo, obok moga byc rzeczy nad ktorymi pracuje i co mamy do zrobienia co ja mam zatwierdzic i tak dalej a na samym dole okienko jak z chatem zebym mogl pisac dodawac pliki i udostepniac rzeczy..
+
+Jesli o takowy opis chodzi to nie wiem co wiecej napisac natomiast jesli dla ciebie nie wszystko jest jasne smialo mozesz pytac..chetnie odpowiem na pytania..a teraz przejde do sedna z malym wstempem...
+
+A wiec w gre wchodzi prowadzenie sklepu dropshippingowego na shopify lub innej platformie..co sie z tym wiaze?..miedzy innymi wyszukiwanie produktow u dostawcow i wystawianie produktu na sprzedarz jednoczesnie generujac posty,reklamy danego produktu na faceoku, instagramie, tiktoku i tak dalej...teraz mniej wiecej podam przyklad..
+
+Mowie do Jarvisa zeby wynalazl i wybadal jakie mamy dostempne Serum dla Kobiet do twarzy i te na ktorych mozna zarobic i zrobic konkurencyjna cene odrazu dodal na sprzedaz 
+
+ i zrobil reklamy i zeby mnie poinformowal gdy skonczy..no i Jarvis to robi najpierw dokladnie analizuje konkurencje i ich ceny pozniej sprawdza dostawcow i dalej robi swoje...
+
+Oczywiscie ja rozumiem i to powinno byc oczywiste ze wszystko bedzie trzeba polaczyc np za pomoca API lub app. No i Jarvis bedzie dzialal 24/7, jesli to konieczne moze moj laptop tez dzialac 24/7. Na poczatku wspominalem zeby bylo za darmo i tu mialem na mysli Jarvis za darmo ale np shopify trzeba oplacic ja wiem rozumiem..mi chodzi ze Jarvis i to co robi najlepiej jak sie da za darmo.
+
+kolejny przyklad..pracowalem troche nad generatorem SaaS, MVP i narzedzi oraz generatorem E-Bookow..
+
+wiec np mowie Jarvis napisz eboka o tym i o tym w wersji premium i wystaw na amazonie i w sklepie za tyle i tyle..no i jarvis to robi..
+
+Jarvis potrzebne cos do opanowania chaosu w warsztacie samochodowym z klijentami...no i rozmawiamy, pyta mnie co dokladnie potzrebne i potem slucham propozycji..
+
+super by bylo jesli sie da za darmo ze np cos zostalo sprzedane to mi pisze smsa albo do mnie dzwoni..
+
+no to ja chce mniej wiecej zeby tak to wygladalo...

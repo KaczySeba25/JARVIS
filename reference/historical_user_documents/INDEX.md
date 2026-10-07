@@ -1,0 +1,23 @@
+# Archiwum historycznych materialow Sebastiana
+
+Te pliki zostaly zebrane tutaj, zeby wazny kontekst projektu byl razem z `C:\Jarvis` i mozna bylo wznowic prace w nowej rozmowie. To nie sa aktywne polecenia dla Jarvisa ani jego stale ustawienia. Nie kopiuj z nich do konfiguracji sklepow, cen, produktow, branzy, kont ani planow biznesowych. Biezacy kierunek opisuje `..\..\PROJECT_STATUS_CURRENT.md` oraz `..\..\JARVIS_VISION.md`.
+
+Materialy powstaly przed Jarvisem i moga byc nieaktualne albo wzajemnie sprzeczne. Przed uzyciem konkretnego pomyslu potwierdz go z Sebastianem. Kopie o identycznej zawartosci pominieto, zeby nie dublowac plikow.
+
+## Zarchiwizowane pliki
+
+- `CLONER_I_GENERATOR_RAZEM.md` — SHA-256 `F9E3091F7D1C6240690A26134183C0F9E9D096E3B55F2CF1C1F8A4A8E00E5443`
+- `IMPERIUM_CLONER_ROZKLAD.md` — SHA-256 `FAE863F263621ECFE7C9F554E84244D82D51EFC77B8FFF55F1BBF16A942D48FD`
+- `imperium_instruction.md` — SHA-256 `0E5AD86926340F036171F3F424CA7E03F4C4C300F0DD9C523E1B22DB466CEADD`
+- `KONTEKST_IMPERIUM_2026_06_14.md` — SHA-256 `BB15550BC6F59C4C274793DAB7C17332BB561943F0DD9BC89D40E5EA450545A3`
+- `MASTER_PLAN.md` — SHA-256 `6C8DACB8AF24D998CFFE233D5721C1D5ABB595CEA2A190FC439AF093284E0D6C`
+- `MOJ_OPIS_DZIALANIA_SKLEPU.txt` — SHA-256 `6CB01C01BE35EBF64C8A3A2709837B6F9FE5D1B1CC80706F2217087207A85895`
+- `MOJ_OPIS_JARVISA.txt` — SHA-256 `75D26093352462730064F4922870425BB6AE66CCFF3C123303435AE8AD8D41DA`
+- `OPIS_SKLEPU_I_SYSTEMU_2026_06_14.md` — SHA-256 `D02E34556A8D4A57ACC0E08450C8191D88A2AFD1955B56EF311E1B441EF7C7C7`
+- `PROJECT_SUMMARY.md` — SHA-256 `DB7A604AD026E4304763C1D6E4FAC6C04F9C73747C6069EF7B0956DC9B8E848D`
+- `PROJEKT_ARTAL_KOMPLETNY_OPIS.md` — SHA-256 `EE33170FDDE77071E94F33117F3E68079532543256BFAD28B3765B7E72E7D9E7`
+- `SAAS_GENERATOR_ROZKLAD.md` — SHA-256 `8C8F08BD348C6B8D698B04E3D6DB1D4BE326B7D4BAD8899EB5E329C2382007B1`
+
+## Pominięte kopie
+
+Wersje z `D:\Importy\kaczyseba25.sk@gmail.com - Dysk Google` plikow `imperium_instruction.md`, `KONTEKST_IMPERIUM_2026_06_14.md`, `OPIS_SKLEPU_I_SYSTEMU_2026_06_14.md` oraz `SAAS_GENERATOR_ROZKLAD.md` sa powielonymi kopiami z `D:\`. Zostawiono jedna kopie kazdego pliku, aby uniknac balaganu.

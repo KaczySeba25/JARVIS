@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "C:\Jarvis\tests\run_tests.py", line 33, in <module>
+    main()
+  File "C:\Jarvis\tests\run_tests.py", line 27, in main
+    assert "build_all" in j.run_skill("skill_builder", "invalid")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
