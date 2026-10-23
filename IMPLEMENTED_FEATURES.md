@@ -1,5 +1,11 @@
 # Aktualny stan rozbudowy Jarvisa
 
+## Router modeli
+
+Po błędzie skonfigurowanej usługi online Jarvis próbuje dostępnego lokalnego modelu Ollama,
+zachowując bieżącą rozmowę. Nie odkrywa ani nie używa przypadkowych publicznych API bez jawnej
+konfiguracji użytkownika.
+
 Opis dotyczy kodu w projekcie, nie obietnicy, że wszystkie przyszłe zadania są już rozwiązane. Jarvis dobiera branżę i narzędzia do aktualnego polecenia; żaden sklep, klient ani rodzaj produktu nie jest jego domyślnym celem.
 
 ## Wdrożone podstawy

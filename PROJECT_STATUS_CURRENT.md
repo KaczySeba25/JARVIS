@@ -1,6 +1,6 @@
 # Jarvis — punkt wznowienia pracy
 
-**Ostatnia aktualizacja:** 2026-10-02  
+**Ostatnia aktualizacja:** 2026-10-24
 **Folder projektu:** `C:\Jarvis`  
 **Jezyk rozmowy z Sebastianem:** polski, prosty i bez niepotrzebnego zargonu.
 
@@ -15,6 +15,12 @@ Przy wiekszym lub nowym zadaniu Jarvis robi dokladny research, porownuje rozwiaz
 Jarvis powinien rozwijac ogolne zdolnosci: research, planowanie, programowanie, tworzenie narzedzi, prace z plikami i uslugami online, uczenie nowych dziedzin, bezpieczne poprawianie siebie, pamiec i ocene wlasnych wynikow. Przykladami przyszlych sprawdzianow sa budowa narzedzia dla wskazanego klienta, przygotowanie specjalizowanego agenta na zlecenie albo opanowanie nowej uslugi internetowej. Nie wolno zamieniac przykladow w stale specjalizacje lub ustawienia.
 
 ## Stan kodu
+
+W tej sesji poprawiono router modeli: po błędzie skonfigurowanej usługi online Jarvis próbuje
+przełączyć się na dostępny lokalny model Ollama, zachowując tę samą rozmowę i komunikując zmianę.
+Konfiguracja nadal musi być jawna — Jarvis nie wysyła rozmów do przypadkowych „darmowych API”.
+Usunięto też z repozytorium lokalny `.env`, cache Python i dane runtime; ich odpowiedniki są ignorowane
+przez `.gitignore`, a wzór konfiguracji jest w `agent/.env.example`.
 
 Przeczytaj nastepnie:
 

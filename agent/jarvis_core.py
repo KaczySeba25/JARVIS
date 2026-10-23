@@ -109,6 +109,9 @@ class Skill:
     path: Path
     description: str
     risk: str = "low"
+    needs_network: bool = False
+    last_verified: str | None = None
+    source_count: int = 0
 
     @property
     def risky(self):
@@ -162,8 +165,15 @@ class JarvisCore:
         self.mode = mode.lower()
         return f"Tryb Jarvisa: {self.mode}"
 
+    def reload_model(self):
+        """Re-read the saved model settings and switch provider without restarting the app."""
+        self.model_router = ModelRouter()
+        self.model = self.model_router.model
+        self.client = self.model_router.client
+        return self.model_router.describe()
+
     def skills(self):
-        return [Skill(item.name, SKILLS_DIR / f"{item.name}.py", item.description, item.risk) for item in discover(SKILLS_DIR)]
+        return [Skill(item.name, SKILLS_DIR / f"{item.name}.py", item.description, item.risk, item.needs_network, item.last_verified, item.source_count) for item in discover(SKILLS_DIR)]
 
     def _load_skill(self, name):
         skill = next((s for s in self.skills() if s.name == name), None)

@@ -1,0 +1,14 @@
+agent/.env
+agent/venv/
+agent/__pycache__/
+**/__pycache__/
+*.pyc
+memory/*.sqlite3
+memory/*.json
+memory/*.jsonl
+memory/snapshots/
+memory/skill_drafts/
+logs/
+vault/*
+!vault/.gitkeep
+
