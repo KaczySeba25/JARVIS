@@ -8,7 +8,18 @@ RISK_LEVEL = "high"
 
 def run(argument=None):
     try:
-        data = argument if isinstance(argument, dict) else json.loads(str(argument or "{}"))
+        if isinstance(argument, dict):
+            data = argument
+        else:
+            raw = str(argument or "").strip()
+            try:
+                data = json.loads(raw)
+            except json.JSONDecodeError:
+                # Accept a plain official URL emitted by a model. URL validation
+                # below remains mandatory and prevents arbitrary schemes/credentials.
+                import re
+                match = re.search(r"https://[^\s\"']+", raw)
+                data = {"url": match.group(0).rstrip(".,)") if match else raw}
         url = str(data.get("url", "")).strip()
         parsed = urlparse(url)
         if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password:

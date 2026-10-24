@@ -120,6 +120,10 @@ Podczas wznowienia etapowego Jarvis poprawnie doszedł do wywołania `connector_
 wywołanie ujawniło, że model czasem przekazuje naturalny tekst zamiast JSON; parser konektora został
 uodporniony na samą nazwę usługi lub zdanie zawierające znaną usługę, bez zwiększania uprawnień.
 
+Parser `api_onboarding` również przyjmuje bezpieczny, zwykły oficjalny adres HTTPS zamiast wymagać
+wyłącznie JSON. Jarvis skutecznie otworzył `https://developers.google.com/youtube/v3` i zatrzymał
+się na wymaganym kroku właściciela: konfiguracji OAuth/API i zapisaniu danych przez bezpieczny vault.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.
