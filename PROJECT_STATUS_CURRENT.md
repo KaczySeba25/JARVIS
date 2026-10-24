@@ -60,6 +60,9 @@ zadanie po `gotowe`. Samo otwarcie strony nie jest traktowane jako uzyskanie dos
 Punkt 1 z nowego zestawu 8 rozszerzeń jest wdrożony: `task_center` udostępnia trwały status,
 timeline, oczekujące zgody i oczekiwanie na użytkownika dla każdego zadania.
 
+Punkt 2 rozpoczęty: `connector_manager` rejestruje jawne konektory API/OAuth/przeglądarki wraz
+z zakresem i endpointem. Nowy konektor jest domyślnie wyłączony i wymaga testu połączenia.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.
