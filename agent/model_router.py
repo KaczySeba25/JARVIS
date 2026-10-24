@@ -75,7 +75,10 @@ class ModelRouter:
         result = []
         groq = os.getenv("GROQ_API_KEY") or os.getenv("JARVIS_API_KEY")
         if groq:
-            result.append(("hosted:groq", requested or "openai/gpt-oss-120b", groq, os.getenv("JARVIS_BASE_URL") or "https://api.groq.com/openai/v1"))
+            base = os.getenv("JARVIS_BASE_URL") or "https://api.groq.com/openai/v1"
+            requested = self._live_model_or_fallback(groq, base, requested, ("openai/gpt-oss-20b", "openai/gpt-oss-120b", "qwen/qwen3.8-27b"))
+            if requested:
+                result.append(("hosted:groq", requested, groq, base))
         gemini = os.getenv("GEMINI_API_KEY")
         if gemini:
             result.append(("hosted:gemini", os.getenv("GEMINI_MODEL", "gemini-2.0-flash"), gemini, "https://generativelanguage.googleapis.com/v1beta/openai/"))
@@ -83,6 +86,20 @@ class ModelRouter:
         if openai_key:
             result.append(("hosted:openai", requested or "gpt-4o-mini", openai_key, "https://api.openai.com/v1"))
         return result
+
+    @staticmethod
+    def _live_model_or_fallback(key, base_url, requested, preferred):
+        """Avoid stale model names while keeping provider discovery bounded."""
+        try:
+            client = OpenAI(api_key=key, base_url=base_url, timeout=5)
+            available = {str(item.id) for item in client.models.list().data}
+            if requested in available:
+                return requested
+            return next((name for name in preferred if name in available), next(iter(available), ""))
+        except Exception:
+            # A provider outage is handled later by complete(); do not block
+            # startup just because model discovery is unavailable.
+            return requested or preferred[0]
 
     def _local_candidates(self):
         explicit = self.prefs["local_model"] or os.getenv("JARVIS_LOCAL_MODEL", "")

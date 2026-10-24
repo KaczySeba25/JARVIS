@@ -93,6 +93,13 @@ są skonfigurowane źródła Groq, Gemini, OpenAI i Ollama; router nie odkrywa p
 API. Konektor manager ma akcję `ensure`, która przygotowuje metadane usługi z katalogu lub z
 oficjalnego endpointu, ale nie tworzy sekretu, konta ani fałszywego statusu połączenia.
 
+Naprawiono również aktywne zadanie YouTube. Przyczyną wcześniejszego zatrzymania był wycofany
+model Groq `llama3-70b-8192`; router odpytał aktualną listę providera i wybrał dostępny
+`openai/gpt-oss-20b`. Nowe zadanie utworzyło task `cdd7bd0d5a294e139d9a5ba356d04850`,
+przeszło planowanie i zatrzymało się na `waiting_approval` przed onboardingiem OAuth oraz
+działaniami zewnętrznymi. To oznacza prawidłowe działanie bramki bezpieczeństwa, a nie awarię.
+Poprawiono też polskie napisy dashboardu, w tym znaki diakrytyczne i symbole menu.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.
