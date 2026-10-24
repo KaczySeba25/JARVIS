@@ -49,6 +49,10 @@ a wykrycie CAPTCHA/SMS/2FA przełącza zadanie w `waiting_user`. Po odpowiedzi �
 wznawia zadanie z tym samym profilem i kontekstem. Pełne połączenie OAuth nadal wymaga konkretnej,
 legalnej usługi i jej zakresów uprawnień.
 
+Rozpoczęto Etap 3: `secret_request` otwiera lokalne okno bezpiecznego przekazania danych.
+Login, hasło, token lub klucz API trafia bezpośrednio do DPAPI vaultu; nie przechodzi przez
+czat, pamięć ani zwykły plik.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.
