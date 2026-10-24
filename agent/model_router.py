@@ -79,9 +79,12 @@ class ModelRouter:
             requested = self._live_model_or_fallback(groq, base, requested, ("openai/gpt-oss-20b", "openai/gpt-oss-120b", "qwen/qwen3.8-27b"))
             if requested:
                 result.append(("hosted:groq", requested, groq, base))
-        gemini = os.getenv("GEMINI_API_KEY")
+        gemini = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         if gemini:
             result.append(("hosted:gemini", os.getenv("GEMINI_MODEL", "gemini-2.0-flash"), gemini, "https://generativelanguage.googleapis.com/v1beta/openai/"))
+        nvidia = os.getenv("NVIDIA_API_KEY")
+        if nvidia:
+            result.append(("hosted:nvidia", os.getenv("NVIDIA_MODEL", "meta/llama-3.1-8b-instruct"), nvidia, "https://integrate.api.nvidia.com/v1"))
         openai_key = os.getenv("OPENAI_API_KEY")
         if openai_key:
             result.append(("hosted:openai", requested or "gpt-4o-mini", openai_key, "https://api.openai.com/v1"))
