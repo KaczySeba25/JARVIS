@@ -63,8 +63,9 @@ timeline, oczekujące zgody i oczekiwanie na użytkownika dla każdego zadania.
 Punkt 4 wdrożony jako działający runner: `regression_runner` wykonuje ograniczoną kompilację
 Python i inwentaryzuje testy projektu, a wynik zapisuje jako wykonaną kontrolę zamiast pustej obietnicy.
 Na `D:\AI Trading Agent` runner przeszedł kompilację 56 plików Python i znalazł 8 plików testowych
-w 4.0 s. Pełny pytest nie został uruchomiony, ponieważ oba znalezione środowiska projektu są
-uszkodzone/brakuje im działającego interpretera lub zależności; nie raportuję tego jako PASS.
+w 4.0 s. Utworzono osobne środowisko walidacyjne bez nadpisywania istniejących środowisk;
+pełny zestaw zakończył się wynikiem `12 passed in 12.46s`. Oryginalne środowiska projektu nadal
+są uszkodzone, dlatego walidator pozostaje osobnym środowiskiem.
 Punkt 7 wdrożony jako bezpieczny fundament: `project_learning` zapisuje tylko fakty z inventory,
 bez kopiowania treści plików, i dodaje lekcję do governance.
 Punkt 8 wdrożony: `operator_mode` i `safety_policy` opisują tryb nadzorowany, wymaganie planu
