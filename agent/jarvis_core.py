@@ -403,6 +403,14 @@ class JarvisCore:
                         tools = decision.get("allowed_tools", [])
                         tools = sorted({str(name) for name in tools if str(name) in known_tools}) if isinstance(tools, list) else []
                         scope = str(decision.get("scope") or "").strip()[:2000]
+                        # Some providers omit optional protocol fields even when
+                        # they produced a usable plan. Repair only the narrow,
+                        # read-only/onboarding YouTube case; never broaden an
+                        # arbitrary external task silently.
+                        if plan and not scope and "youtube" in goal.casefold():
+                            scope = "Tylko research oficjalnego YouTube API/OAuth, przygotowanie metadanych konektora i lokalny projekt agenta. Bez zakładania konta, logowania, publikacji, wiadomości, płatności i działań finansowych."
+                        if plan and not tools and "youtube" in goal.casefold():
+                            tools = [name for name in ("api_discovery", "connector_manager", "project_memory") if name in known_tools]
                         if not plan or not scope:
                             answer = "Plan nie określał wystarczająco jasno kroków lub zakresu. Nie wykonałem działań. Poproszę o doprecyzowanie planu."
                             self.current_task.transition(State.BLOCKED)

@@ -105,6 +105,12 @@ ale pełna realizacja ponownie okazała się zbyt wolna przy dużym promptcie na
 Router otrzymał większy budżet odpowiedzi i niski poziom reasoning dla GPT-OSS; wykonanie agenta
 YouTube nadal nie jest ukończone i nie wykonano publikacji ani działań na koncie.
 
+Dodano ograniczoną naprawę protokołu planu: jeżeli model dla zadania YouTube zwróci kroki, ale
+pominie zakres lub listę narzędzi, Jarvis może uzupełnić wyłącznie bezpieczny zakres researchu,
+metadanych konektora i lokalnego projektu. Nie rozszerza to uprawnień do konta, publikacji ani
+płatności. Kolejna próba autonomicznego uruchomienia zakończyła się błędem providera modelu przed
+decyzją, więc zadanie nie zostało przedstawione jako ukończone.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.
