@@ -7,7 +7,8 @@ def run(root: str, timeout: int = 60):
     if not path.is_dir(): return {"ok":False,"error":"project_not_found"}
     started=time.time(); result={"target":str(path),"checks":[]}
     try:
-        targets=[str(item) for item in path.iterdir() if item.is_dir() and item.name not in {".git","venv",".venv","node_modules","__pycache__"}]
+        ignored={".git","venv",".venv","node_modules","__pycache__","models","checkpoints","artifacts","WARTOSCIOWE_Z_INNYCH_PROJEKTOW"}
+        targets=[str(item) for item in path.iterdir() if item.is_dir() and item.name not in ignored]
         targets.append(str(path / "__main__.py")) if (path / "__main__.py").exists() else None
         compile_result=subprocess.run([sys.executable,"-m","compileall","-q",*targets],capture_output=True,text=True,timeout=timeout,cwd=str(path))
         result["checks"].append({"name":"python_compile","passed":compile_result.returncode==0,"output":(compile_result.stderr or compile_result.stdout)[-2000:]})
