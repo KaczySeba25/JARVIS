@@ -79,6 +79,11 @@ GitHub, Outlook, Slack, Shopify i Binance Testnet), wyszukiwaniem oraz rejestrac
 konektora. Katalog zawiera wyłącznie metadane i oficjalne adresy dokumentacji; nie przechowuje
 sekretów, nie włącza dostępu sieciowego i nie zastępuje konfiguracji OAuth/API ani testu połączenia.
 
+Dodano `agent/import_oauth_json.py`, który importuje lokalny plik klienta Google OAuth do
+zaszyfrowanego vaultu DPAPI. Import zapisuje identyfikator klienta jako metadane/login,
+a tajny klucz jako sekret; wartości nie są wypisywane ani przekazywane do modelu. Import
+pliku YouTube z folderu Pobrane zakończył się sukcesem, a `py_compile` przeszedł poprawnie.
+
 Próba uruchomienia Jarvisa z zadaniem przygotowania legalnego agenta YouTube została wykonana w
 lokalnym środowisku. Router poprawnie wykrył Ollama i model `qwen3.5:4b`, utworzył zadanie oraz
 zapisał etap planowania. Generowanie odpowiedzi nie zakończyło się w rozsądnym czasie na CPU,
