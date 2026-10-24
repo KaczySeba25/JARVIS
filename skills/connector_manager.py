@@ -7,7 +7,17 @@ except ImportError:
     from agent.connector_registry import save, list_all, catalog, add_custom, ensure
 def run(argument=None):
     try:
-        data = argument if isinstance(argument, dict) else json.loads(str(argument or "{}"))
+        if isinstance(argument, dict):
+            data = argument
+        else:
+            raw = str(argument or "{}").strip()
+            try:
+                data = json.loads(raw)
+            except json.JSONDecodeError:
+                # Models sometimes emit the service name instead of the small
+                # JSON contract. Treat it as a safe metadata-only ensure call.
+                known = next((name for name in ("youtube", "google", "github", "outlook", "slack", "shopify", "binance-testnet") if name in raw.casefold()), raw)
+                data = {"action": "ensure", "service": known}
         action = data.get("action", "list")
         if action == "list": return {"ok": True, **list_all()}
         if action == "catalog": return {"ok": True, "items": catalog(data.get("query", ""))}

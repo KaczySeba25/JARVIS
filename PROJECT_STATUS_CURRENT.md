@@ -116,6 +116,10 @@ ryzyka i trybu sieciowego. Ma to zmniejszyć zużycie kontekstu oraz opóźnieni
 odbierania modelowi informacji o dostępnych narzędziach. Próba po tej zmianie nadal nie dała
 decyzji w rozsądnym czasie na aktualnym providerze, więc agent YouTube pozostaje nieukończony.
 
+Podczas wznowienia etapowego Jarvis poprawnie doszedł do wywołania `connector_manager`. Pierwsze
+wywołanie ujawniło, że model czasem przekazuje naturalny tekst zamiast JSON; parser konektora został
+uodporniony na samą nazwę usługi lub zdanie zawierające znaną usługę, bez zwiększania uprawnień.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.
