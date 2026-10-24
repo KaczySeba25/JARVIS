@@ -44,6 +44,11 @@ Jarvis ma również `computer_files`: kontrolowany dostęp do zatwierdzonych kat
 i `D:\AI Trading Agent`. Ścieżki poza allowlistą są blokowane, odczyt redaguje typowe sekrety,
 a zapis robi kopię `.jarvis-backup`. Dostęp do plików jest wysokiego ryzyka i wymaga zatwierdzonego planu.
 
+Etap 2 domknięty technicznie: profil przeglądarki jest trwały i przechowywany lokalnie w vault,
+a wykrycie CAPTCHA/SMS/2FA przełącza zadanie w `waiting_user`. Po odpowiedzi „gotowe” Jarvis
+wznawia zadanie z tym samym profilem i kontekstem. Pełne połączenie OAuth nadal wymaga konkretnej,
+legalnej usługi i jej zakresów uprawnień.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.

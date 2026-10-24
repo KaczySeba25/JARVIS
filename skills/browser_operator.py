@@ -6,21 +6,25 @@ DPAPI vault by service reference. Final submits require an approved plan.
 from __future__ import annotations
 import json
 from urllib.parse import urlparse
+from pathlib import Path
 
 RISK_LEVEL = "high"
 _playwright = None
 _browser = None
 _page = None
+_context = None
 
 def _load_page():
-    global _playwright, _browser, _page
+    global _playwright, _browser, _page, _context
     if _page is not None and not _page.is_closed():
         return _page
     from playwright.sync_api import sync_playwright
     if _playwright is None:
         _playwright = sync_playwright().start()
-    _browser = _playwright.chromium.launch(headless=False)
-    _page = _browser.new_page()
+    profile = Path(__file__).resolve().parent.parent / "vault" / "browser_profile"
+    profile.mkdir(parents=True, exist_ok=True)
+    _context = _playwright.chromium.launch_persistent_context(str(profile), headless=False)
+    _page = _context.pages[0] if _context.pages else _context.new_page()
     return _page
 
 def _url(value):

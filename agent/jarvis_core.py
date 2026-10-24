@@ -448,6 +448,17 @@ class JarvisCore:
                                 stage = "researching" if skill_meta.needs_network else "executing"
                                 self._progress(stage, f"Wykonuję krok: {name}.")
                                 result = self.run_skill(name, argument)
+                                if name == "browser_operator":
+                                    try:
+                                        browser_result = json.loads(result) if isinstance(result, str) else result
+                                    except (TypeError, json.JSONDecodeError):
+                                        browser_result = {}
+                                    if browser_result.get("human_required"):
+                                        task_runtime.set_status(self.active_task_id, "waiting_user")
+                                        self.current_task.transition(State.WAITING_USER)
+                                        self._progress("waiting_user", "Przeglądarka wymaga Twojej interwencji.", url=browser_result.get("url"))
+                                        answer = "Przeglądarka wymaga Twojego kroku (np. CAPTCHA, SMS lub 2FA). Wykonaj go w otwartym oknie, a następnie napisz ‘gotowe’. Nie wysyłaj hasła ani kodu w czacie."
+                                        break
                                 if name == "universal_login":
                                     try:
                                         handoff_result = json.loads(result)
