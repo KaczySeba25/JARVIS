@@ -393,7 +393,22 @@ class JarvisCore:
                     if self.cancel_event.is_set():
                         answer = "Zatrzymałem dalsze kroki na Twoje polecenie. Wcześniejsze działania mogły już zostać wykonane."
                         break
-                    response = retry_call(lambda: self.model_router.complete(messages, temperature=0.2, max_tokens=2048), attempts=SETTINGS.max_retries)
+                    response = None
+                    model_error = None
+                    for model_attempt in range(3):
+                        try:
+                            response = retry_call(lambda: self.model_router.complete(messages, temperature=0.2, max_tokens=2048), attempts=SETTINGS.max_retries)
+                            break
+                        except Exception as exc:
+                            model_error = exc
+                            switched = self.model_router.failover()
+                            self.model = self.model_router.model
+                            self.client = self.model_router.client
+                            self._progress("model_switch", f"Model nie odpowiedział; przełączam model (próba {model_attempt + 1}/3).", provider=self.model_router.provider, model=self.model_router.model)
+                            if not switched:
+                                break
+                    if response is None:
+                        raise model_error or RuntimeError("Brak odpowiedzi skonfigurowanych modeli.")
                     raw = response.choices[0].message.content or ""
                     decision = self._decision(raw)
                     if decision.get("type") == "approval_required":

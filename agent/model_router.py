@@ -124,6 +124,22 @@ class ModelRouter:
     def available(self):
         return [self.model] if self.client else []
 
+    def failover(self):
+        """Select the next safe configured model without losing conversation state."""
+        if self.provider.startswith("hosted"):
+            self.installed = local_models(self.local_url)
+            local = self._local_candidates()
+            if local:
+                self._activate(*local[0])
+                self._candidates = local[1:]
+                self.warning = "Provider online nie odpowiedział; kontynuuję na Ollama."
+                return True
+        if self._candidates:
+            provider, model, key, base = self._candidates.pop(0)
+            self._activate(provider, model, key, base)
+            return True
+        return False
+
     def describe(self) -> dict:
         return {"provider": self.provider, "model": self.model, "warning": self.warning,
                 "installed_local": self.installed, "preferences": dict(self.prefs)}
