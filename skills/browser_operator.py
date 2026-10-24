@@ -40,7 +40,11 @@ def run(argument=None):
             return {"ok": True, "action": action, "url": page.url, "title": page.title()}
         page = _load_page()
         if action == "inspect":
-            return {"ok": True, "url": page.url, "title": page.title(), "text": page.locator("body").inner_text(timeout=10000)[:12000]}
+            text = page.locator("body").inner_text(timeout=10000)[:12000]
+            lower = text.lower()
+            human_markers = ("captcha", "recaptcha", "two-factor", "2fa", "verification code", "kod sms", "potwierdź numer")
+            return {"ok": True, "url": page.url, "title": page.title(), "text": text,
+                    "human_required": any(marker in lower for marker in human_markers)}
         selector = str(data.get("selector", "")).strip()
         if not selector or len(selector) > 500:
             raise ValueError("selector_required")

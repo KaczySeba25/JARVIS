@@ -35,6 +35,9 @@ Etap 3 rozpoczęty: `agent/recovery.py` klasyfikuje awarie, zapisuje techniczny 
 zamknięty zestaw bezpiecznych, maksymalnie jednokrotnych ponowień. Błędy działań zewnętrznych,
 poświadczeń i blokad człowieka nie są automatycznie powtarzane.
 
+Operator przeglądarki oznacza stronę jako `human_required`, gdy wykryje typowe CAPTCHA, 2FA,
+SMS lub weryfikację. Nie próbuje tych zabezpieczeń obchodzić.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.
