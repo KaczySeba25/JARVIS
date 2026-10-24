@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import os
 import re
+import time
 from dataclasses import dataclass
 from openai import OpenAI
 
@@ -68,7 +69,7 @@ class ModelRouter:
 
     def _activate(self, provider, model, key, base_url):
         self.provider, self.model = provider, model
-        self.client = OpenAI(api_key=key, base_url=base_url, timeout=float(os.getenv("JARVIS_MODEL_TIMEOUT", "20")))
+        self.client = OpenAI(api_key=key, base_url=base_url, timeout=float(os.getenv("JARVIS_MODEL_TIMEOUT", "8")))
 
     def _configured_hosted(self):
         requested = self.prefs["hosted_model"] or os.getenv("JARVIS_MODEL", "")
@@ -156,6 +157,7 @@ class ModelRouter:
             kwargs["reasoning_effort"] = "low"
             kwargs["max_tokens"] = max(int(kwargs.get("max_tokens", 2048)), 8192)
         errors = []
+        deadline = time.monotonic() + max(5.0, float(os.getenv("JARVIS_MAX_MODEL_SECONDS", "25")))
         candidates = [(self.provider, self.model, self.client)] + [
             (provider, model, OpenAI(api_key=key, base_url=base, timeout=float(os.getenv("JARVIS_MODEL_TIMEOUT", "20"))))
             for provider, model, key, base in self._candidates
@@ -165,6 +167,8 @@ class ModelRouter:
             for provider, model, key, base in self._local_candidates():
                 candidates.append((provider, model, OpenAI(api_key=key, base_url=base, timeout=float(os.getenv("JARVIS_MODEL_TIMEOUT", "20")))))
         for provider, model, client in candidates:
+            if time.monotonic() >= deadline:
+                break
             try:
                 response = client.chat.completions.create(model=model, messages=messages, **kwargs)
                 if (provider, model) != (self.provider, self.model):

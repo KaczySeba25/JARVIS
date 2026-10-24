@@ -293,6 +293,11 @@ class JarvisCore:
 
     def ask(self, message):
         self.cancel_event.clear()
+        quick = self._quick_local_command(message)
+        if quick is not None:
+            self.memory.append("user", message)
+            self.memory.append("assistant", quick)
+            return quick
         if not self.loop_guard.allow(message.strip().lower()):
             audit_event("loop_blocked", message=message[:500])
             return "Zatrzymałem działanie: wykryłem powtarzającą się pętlę."
@@ -546,3 +551,28 @@ class JarvisCore:
         self.memory.append("assistant", answer)
         audit_event("task_finished", task_id=self.active_task_id, state=self.current_task.state.value, quality=quality.correctness)
         return answer
+
+    def _quick_local_command(self, message):
+        """Handle simple local actions without waiting for an LLM."""
+        text = str(message or "").strip()
+        match = re.match(r"^(?:otwórz|otworz|otwórz mi|otworz mi)\s+(?:plik|folder)?\s*(.+)$", text, re.I)
+        if not match:
+            return None
+        raw_path = match.group(1).strip().strip('"')
+        if not raw_path:
+            return "Podaj pełną ścieżkę pliku lub folderu, który mam otworzyć."
+        try:
+            from filesystem_policy import resolve
+            path = resolve(raw_path)
+            if not path.exists():
+                return f"Nie znalazłem tego pliku lub folderu: {path}"
+            if os.name == "nt":
+                os.startfile(str(path))
+            else:
+                import subprocess
+                subprocess.Popen(["xdg-open", str(path)])
+            return f"Otworzyłem: {path}"
+        except PermissionError:
+            return "Nie otworzyłem elementu, bo jego ścieżka nie znajduje się na zatwierdzonej liście folderów."
+        except Exception as exc:
+            return f"Nie udało się otworzyć elementu ({type(exc).__name__})."

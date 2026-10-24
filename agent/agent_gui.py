@@ -197,10 +197,11 @@ class ConnectorWindow(ctk.CTkToplevel):
 class JarvisGUI(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("JARVIS // NEURAL COCKPIT")
-        self.geometry("1280x820")
-        self.minsize(980, 650)
-        self.configure(fg_color="#080b12")
+        self.title("Jarvis")
+        self.geometry("1380x860")
+        self.minsize(1050, 680)
+        self.configure(fg_color="#212121")
+        self.grid_columnconfigure(0, weight=0, minsize=245)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(1, weight=1)
         self.busy = False
@@ -226,47 +227,52 @@ class JarvisGUI(ctk.CTk):
                 finished.set()
 
         self.after(0, ask)
-        return finished.wait(300) and answer[0]
+        # The worker thread may legitimately wait for the user.  300 ms made
+        # every confirmation look like a silent denial while the task kept
+        # running in the background.
+        finished.wait()
+        return answer[0]
 
     def build(self):
         bar = ctk.CTkFrame(self, fg_color="#0d1420", corner_radius=0)
         bar.grid(row=0, column=0, columnspan=2, sticky="ew")
         bar.grid_columnconfigure(1, weight=1)
-        ctk.CTkLabel(bar, text="JARVIS", font=ctk.CTkFont(size=22, weight="bold"), text_color="#77e6ff").grid(row=0, column=0, padx=22, pady=15)
-        ctk.CTkLabel(bar, textvariable=self.state_text, font=ctk.CTkFont(size=12, weight="bold"), text_color="#71f6b5").grid(row=0, column=1, sticky="w")
-        self.menu_button = ctk.CTkButton(bar, text="☰  MENU", width=110, fg_color="#1b2a3d", hover_color="#27405c", command=self.open_menu)
+        ctk.CTkLabel(bar, text="Jarvis", font=ctk.CTkFont(size=22, weight="bold"), text_color="#f2f2f2").grid(row=0, column=0, padx=22, pady=15)
+        ctk.CTkLabel(bar, textvariable=self.state_text, font=ctk.CTkFont(size=12, weight="bold"), text_color="#a8a8a8").grid(row=0, column=1, sticky="w")
+        self.menu_button = ctk.CTkButton(bar, text="☰  Menu", width=110, fg_color="#3a3a3a", hover_color="#4a4a4a", command=self.open_menu)
         self.menu_button.grid(row=0, column=2, padx=(0, 10))
-        ctk.CTkButton(bar, text="AWARYJNE STOP", width=130, fg_color="#8f2638", command=self.stop).grid(row=0, column=3, padx=(0, 18))
+        ctk.CTkButton(bar, text="Zatrzymaj", width=110, fg_color="#7f3030", hover_color="#9b3b3b", command=self.stop).grid(row=0, column=3, padx=(0, 18))
         self.build_menu()
 
-        face = ctk.CTkFrame(self, fg_color="#0a101a", corner_radius=0)
+        face = ctk.CTkFrame(self, fg_color="#171717", corner_radius=0)
         face.grid(row=1, column=0, padx=(16, 8), pady=16, sticky="nsew")
         face.grid_rowconfigure(0, weight=1)
         face.grid_columnconfigure(0, weight=1)
-        asset = Path(__file__).resolve().parent.parent / "assets" / "jarvis_face.webp"
-        self.face_image = ctk.CTkImage(light_image=Image.open(asset), dark_image=Image.open(asset), size=(390, 440))
-        ctk.CTkLabel(face, image=self.face_image, text="").grid(row=0, column=0, padx=18, pady=18)
-        ctk.CTkLabel(face, textvariable=self.task_text, wraplength=360, text_color="#90a8ba").grid(row=1, column=0, padx=20, pady=(0, 18))
+        ctk.CTkButton(face, text="＋  Nowa rozmowa", height=42, fg_color="#3b82f6", hover_color="#2563eb", command=self.clear_chat).grid(row=0, column=0, padx=16, pady=(20, 24), sticky="ew")
+        ctk.CTkLabel(face, text="JARVIS", text_color="#f2f2f2", font=ctk.CTkFont(size=13, weight="bold"), anchor="w").grid(row=1, column=0, padx=18, pady=(0, 8), sticky="ew")
+        ctk.CTkLabel(face, text="Twój lokalny asystent", text_color="#a3a3a3", anchor="w").grid(row=2, column=0, padx=18, sticky="ew")
+        ctk.CTkLabel(face, text="\nNarzędzia\n• pliki i projekty\n• przeglądarka\n• konektory\n• pamięć i zadania", justify="left", anchor="nw", text_color="#b5b5b5").grid(row=3, column=0, padx=18, pady=22, sticky="new")
+        ctk.CTkLabel(face, textvariable=self.task_text, wraplength=205, justify="left", anchor="sw", text_color="#8f8f8f").grid(row=4, column=0, padx=18, pady=18, sticky="sew")
 
-        panel = ctk.CTkFrame(self, fg_color="#0d1420", corner_radius=8)
+        panel = ctk.CTkFrame(self, fg_color="#212121", corner_radius=0)
         panel.grid(row=1, column=1, padx=(8, 16), pady=16, sticky="nsew")
         panel.grid_columnconfigure(0, weight=1)
         panel.grid_rowconfigure(0, weight=3)
         panel.grid_rowconfigure(1, weight=1)
-        self.chat = ctk.CTkTextbox(panel, state="disabled", font=ctk.CTkFont(size=14))
+        self.chat = ctk.CTkTextbox(panel, state="disabled", font=ctk.CTkFont(size=14), fg_color="#212121", border_width=0, wrap="word")
         self.chat.grid(row=0, column=0, padx=14, pady=(14, 8), sticky="nsew")
-        self.progress_view = ctk.CTkTextbox(panel, state="disabled", height=130, font=ctk.CTkFont(size=12), text_color="#9eb6c4")
+        self.progress_view = ctk.CTkTextbox(panel, state="disabled", height=130, font=ctk.CTkFont(size=12), text_color="#a3a3a3", fg_color="#181818", border_width=0)
         self.progress_view.grid(row=1, column=0, padx=14, pady=8, sticky="nsew")
         bottom = ctk.CTkFrame(panel, fg_color="transparent")
         bottom.grid(row=2, column=0, padx=14, pady=(0, 14), sticky="ew")
         bottom.grid_columnconfigure(0, weight=1)
-        self.input = ctk.CTkEntry(bottom, placeholder_text="Wpisz polecenie dla Jarvisa...")
+        self.input = ctk.CTkEntry(bottom, placeholder_text="Napisz wiadomość do Jarvisa…", height=46, fg_color="#303030", border_color="#4a4a4a")
         self.input.grid(row=0, column=0, sticky="ew")
         self.input.bind("<Return>", lambda _: self.send())
-        self.send_button = ctk.CTkButton(bottom, text="WYŚLIJ", width=100, command=self.send)
+        self.send_button = ctk.CTkButton(bottom, text="Wyślij", width=100, height=44, fg_color="#3b82f6", hover_color="#2563eb", command=self.send)
         self.send_button.grid(row=0, column=1, padx=(10, 0))
 
-        ctk.CTkLabel(self, textvariable=self.footer_text, text_color="#698394").grid(row=2, column=0, columnspan=2, padx=18, pady=8, sticky="w")
+        ctk.CTkLabel(self, textvariable=self.footer_text, text_color="#8f8f8f").grid(row=2, column=0, columnspan=2, padx=18, pady=8, sticky="w")
 
     def build_menu(self):
         style = {"tearoff": 0, "bg": "#0d1420", "fg": "#d6e4ee", "activebackground": "#27405c", "activeforeground": "#ffffff", "bd": 0}

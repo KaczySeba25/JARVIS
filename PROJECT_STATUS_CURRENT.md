@@ -148,6 +148,18 @@ W projekcie sa m.in. lokalne plany zadań i historia postepu, pamiec z mozliwosc
 - Sama obecnosc skilla nie oznacza, ze jest kompletny lub ekspercki.
 - Ostatni audyt odnotowuje kompilacje skladni Pythona; pelny zestaw testow i prawdziwe integracje nie byly wtedy uruchomione.
 
+## Ostatnia naprawa responsywnosci i interfejsu
+
+Naprawiono krytyczna responsywnosc wykonania: domyslny timeout pojedynczego zadania modelu to
+8 s, cale przejscie po providerach ma limit 25 s, a domyslna liczba ponowien to jedno. Awaria
+modelu nie powinna juz blokowac interfejsu na wiele minut. Poprawiono tez oczekiwanie na dialog
+potwierdzenia GUI; wczesniejsze 300 ms powodowalo ciche odrzucanie potwierdzen.
+
+Dodano szybkie lokalne polecenie `otworz plik/folder <sciezka>`, wykonywane bez czekania na model
+i ograniczone do zatwierdzonych katalogow. Przebudowano dashboard na nowoczesny uklad rozmowy
+z lewym panelem nawigacji, nowa rozmowa, panelem narzedzi, czytelnym czatem i paskiem stanu.
+Zmienione pliki przechodza kompilacje Python w `agent/venv`.
+
 ## Materialy i wersje dokumentow
 
 Wczesniejsze notatki o Imperium, generatorze, SaaS, tradingu, sklepie i opisie Jarvisa sa zarchiwizowane w `reference\historical_user_documents\`. Wiele plikow ma date sprzed projektu Jarvis. Niektore sa powielone, nieaktualne lub sprzeczne z pozniejszymi ustaleniami. Traktuj je jako material do zrozumienia historii i pomyslow, nie jako instrukcje dla Jarvisa. Zestawienie i sumy plikow sa w `reference\historical_user_documents\INDEX.md`.
