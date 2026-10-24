@@ -6,6 +6,12 @@ Po błędzie skonfigurowanej usługi online Jarvis próbuje dostępnego lokalneg
 zachowując bieżącą rozmowę. Nie odkrywa ani nie używa przypadkowych publicznych API bez jawnej
 konfiguracji użytkownika.
 
+## Bezpieczny vault i lekcje z błędów
+
+Vault DPAPI przechowuje poświadczenia lokalnie, a publiczny skill zwraca tylko metadane i status.
+Sekrety są dostępne wyłącznie dla zaufanego kodu konektora w procesie Jarvisa. Governance zapisuje
+lekcje z błędów z ograniczoną pewnością i źródłem, aby przyszłe zadania mogły je ocenić przed użyciem.
+
 Opis dotyczy kodu w projekcie, nie obietnicy, że wszystkie przyszłe zadania są już rozwiązane. Jarvis dobiera branżę i narzędzia do aktualnego polecenia; żaden sklep, klient ani rodzaj produktu nie jest jego domyślnym celem.
 
 ## Wdrożone podstawy

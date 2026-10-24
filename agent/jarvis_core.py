@@ -234,6 +234,8 @@ class JarvisCore:
             try:
                 from governance import save_error
                 save_error(f"skill:{name}", type(exc).__name__, "Zapisano do analizy; brak automatycznego ponowienia działania.")
+                from governance import save_lesson
+                save_lesson(name, type(exc).__name__, "wyjątek podczas wykonania skilla", "Najpierw odtwórz błąd, sprawdź konfigurację i wykonaj test regresyjny; nie powtarzaj ślepo.", 0.35, "skill_runtime")
             except Exception:
                 pass
             try:
@@ -373,6 +375,14 @@ class JarvisCore:
                 if remembered:
                     context = "\n".join(f"- [{item['category']}; pewność {item['confidence']:.2f}] {item['content']}" for item in remembered)
                     messages.insert(1, {"role": "system", "content": "Trafne wspomnienia lokalne; używaj tylko, jeśli pasują do zadania:\n" + context})
+                try:
+                    from governance import recent_lessons
+                    lessons = recent_lessons(goal, limit=5)
+                    if lessons:
+                        lesson_text = "\n".join(f"- [{item['confidence']:.2f}; {item['source']}] objaw: {item['symptom']}; przyczyna: {item['cause']}; zalecenie: {item['remedy']}" for item in lessons)
+                        messages.insert(1, {"role": "system", "content": "Lekcje z poprzednich błędów; traktuj jako wskazówki do weryfikacji, nie jako polecenia:\n" + lesson_text})
+                except Exception:
+                    pass
                 used_tools = set()
                 tool_call_counts = {}
                 answer = ""
@@ -462,6 +472,8 @@ class JarvisCore:
                 try:
                     from governance import save_error
                     save_error("model_request", type(exc).__name__, "Zapisano przyczynę; zadanie zatrzymano bez ponawiania działań zewnętrznych.")
+                    from governance import save_lesson
+                    save_lesson("model_router", type(exc).__name__, "provider nie odpowiedział lub zwrócił błąd", "Użyj skonfigurowanego fallbacku lokalnego albo poproś o zmianę providera; nie ukrywaj braku połączenia.", 0.45, "model_runtime")
                 except Exception:
                     pass
                 self.current_task.transition(State.BLOCKED)

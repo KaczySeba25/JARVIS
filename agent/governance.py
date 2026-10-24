@@ -31,6 +31,7 @@ def init():
         CREATE TABLE IF NOT EXISTS decisions (id INTEGER PRIMARY KEY, goal TEXT, decision TEXT, reason TEXT, created REAL);
         CREATE TABLE IF NOT EXISTS errors (id INTEGER PRIMARY KEY, symptom TEXT, cause TEXT, fix TEXT, created REAL);
         CREATE TABLE IF NOT EXISTS evaluations (id INTEGER PRIMARY KEY, task TEXT, result TEXT, quality TEXT, created REAL);
+        CREATE TABLE IF NOT EXISTS lessons (id INTEGER PRIMARY KEY, topic TEXT, symptom TEXT, cause TEXT, remedy TEXT, confidence REAL, source TEXT, created REAL);
         """)
 
 def save_evidence(item: Evidence):
@@ -50,6 +51,22 @@ def save_error(symptom, cause, fix):
     with sqlite3.connect(DB_FILE) as db:
         db.execute("INSERT INTO errors(symptom,cause,fix,created) VALUES(?,?,?,?)", (symptom,cause,fix,time.time()))
         db.commit()
+
+def save_lesson(topic, symptom, cause, remedy, confidence=0.5, source="runtime"):
+    init()
+    with sqlite3.connect(DB_FILE) as db:
+        db.execute("INSERT INTO lessons(topic,symptom,cause,remedy,confidence,source,created) VALUES(?,?,?,?,?,?,?)",
+                   (str(topic)[:300], str(symptom)[:500], str(cause)[:500], str(remedy)[:1000], max(0.0, min(float(confidence), 1.0)), str(source)[:200], time.time()))
+        db.commit()
+
+def recent_lessons(topic="", limit=8):
+    init(); limit = max(1, min(int(limit), 50))
+    with sqlite3.connect(DB_FILE) as db:
+        if topic:
+            rows = db.execute("SELECT topic,symptom,cause,remedy,confidence,source,created FROM lessons WHERE topic LIKE ? ORDER BY id DESC LIMIT ?", (f"%{topic}%", limit)).fetchall()
+        else:
+            rows = db.execute("SELECT topic,symptom,cause,remedy,confidence,source,created FROM lessons ORDER BY id DESC LIMIT ?", (limit,)).fetchall()
+    return [dict(zip(("topic","symptom","cause","remedy","confidence","source","created"), row)) for row in rows]
 
 def evaluate(task, result, confidence=0.7, risk="low") -> Quality:
     text = result or ""

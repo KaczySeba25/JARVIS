@@ -17,9 +17,9 @@ class SkillMeta:
     source_count: int = 0
 
 def discover(directory: Path) -> list[SkillMeta]:
-    high_risk = {"system_cmd", "code_tester", "vault_manager", "universal_login", "skill_lifecycle", "skill_builder", "workspace_runner", "workspace_history"}
+    high_risk = {"system_cmd", "code_tester", "vault_manager", "universal_login", "browser_operator", "skill_lifecycle", "skill_builder", "workspace_runner", "workspace_history"}
     medium_risk = {"code_writer", "self_improvement", "memory_save", "memory_forget", "memory_manage", "file_manager", "task_manager", "notification_router", "workflow_scheduler"}
-    network = {"web_research", "deep_research", "market_data", "security_audit", "universal_login"}
+    network = {"web_research", "deep_research", "market_data", "security_audit", "universal_login", "browser_operator"}
     result = []
     for path in sorted(directory.glob("*.py")):
         if path.name.startswith("__"): continue
