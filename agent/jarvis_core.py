@@ -232,6 +232,8 @@ class JarvisCore:
         except Exception as exc:
             repair = {"rolled_back": False}
             try:
+                from recovery import record
+                record(name, type(exc).__name__, "rollback_and_record_lesson", 1, "failed_operation_recorded")
                 from governance import save_error
                 save_error(f"skill:{name}", type(exc).__name__, "Zapisano do analizy; brak automatycznego ponowienia działania.")
                 from governance import save_lesson

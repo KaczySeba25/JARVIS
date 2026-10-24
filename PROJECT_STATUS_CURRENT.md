@@ -31,6 +31,10 @@ Etap 2 rozpoczęty: dodano ogólny skill `browser_operator` oparty o Playwright.
 inspekcję, zwykłe pola formularzy i pola sekretów przez referencję vaultu. Kliknięcia wymagają
 zatwierdzonego planu; CAPTCHA, SMS, 2FA i blokady nadal wymagają człowieka.
 
+Etap 3 rozpoczęty: `agent/recovery.py` klasyfikuje awarie, zapisuje techniczny ślad i definiuje
+zamknięty zestaw bezpiecznych, maksymalnie jednokrotnych ponowień. Błędy działań zewnętrznych,
+poświadczeń i blokad człowieka nie są automatycznie powtarzane.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.
