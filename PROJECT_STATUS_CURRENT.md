@@ -22,10 +22,12 @@ Konfiguracja nadal musi być jawna — Jarvis nie wysyła rozmów do przypadkowy
 Usunięto też z repozytorium lokalny `.env`, cache Python i dane runtime; ich odpowiedniki są ignorowane
 przez `.gitignore`, a wzór konfiguracji jest w `agent/.env.example`.
 
-Etap 1 rozbudowy jest wdrażany: vault używa DPAPI, waliduje identyfikatory usług, obsługuje zapis,
+Etap 1 rozbudowy jest zakończony: vault używa DPAPI, waliduje identyfikatory usług, obsługuje zapis,
 metadane i usuwanie, a warstwa skilla nigdy nie zwraca sekretu do modelu. Zaufane konektory mogą
 czytać sekret tylko w procesie. Governance zapisuje również ustrukturyzowane lekcje z błędów,
-zamiast automatycznie powtarzać nieudane działanie.
+zamiast automatycznie powtarzać nieudane działanie. Dodatkowo zapisuje bezpieczny audyt użycia,
+rotacja nie ujawnia starego sekretu, a brakujące dane są pobierane przez bezpieczny formularz,
+nie przez czat.
 
 Etap 2 rozpoczęty: dodano ogólny skill `browser_operator` oparty o Playwright. Obsługuje nawigację,
 inspekcję, zwykłe pola formularzy i pola sekretów przez referencję vaultu. Kliknięcia wymagają
