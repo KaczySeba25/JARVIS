@@ -74,6 +74,18 @@ i kroki wymagające człowieka.
 Punkt 2 rozpoczęty: `connector_manager` rejestruje jawne konektory API/OAuth/przeglądarki wraz
 z zakresem i endpointem. Nowy konektor jest domyślnie wyłączony i wymaga testu połączenia.
 
+Dashboard otrzymał panel `Konektory...` z lokalnym katalogiem usług (m.in. YouTube, Google,
+GitHub, Outlook, Slack, Shopify i Binance Testnet), wyszukiwaniem oraz rejestracją własnego
+konektora. Katalog zawiera wyłącznie metadane i oficjalne adresy dokumentacji; nie przechowuje
+sekretów, nie włącza dostępu sieciowego i nie zastępuje konfiguracji OAuth/API ani testu połączenia.
+
+Próba uruchomienia Jarvisa z zadaniem przygotowania legalnego agenta YouTube została wykonana w
+lokalnym środowisku. Router poprawnie wykrył Ollama i model `qwen3.5:4b`, utworzył zadanie oraz
+zapisał etap planowania. Generowanie odpowiedzi nie zakończyło się w rozsądnym czasie na CPU,
+więc próbę zatrzymano bez działań zewnętrznych. Nie deklaruję ukończenia zadania YouTube ani
+utworzenia konta; wymaga to działającego modelu o akceptowalnej szybkości, konkretnego OAuth
+Google/YouTube i późniejszej akceptacji planu.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.

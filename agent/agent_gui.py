@@ -12,6 +12,10 @@ from jarvis_core import JarvisCore
 import task_runtime
 import user_settings
 import local_provider
+try:
+    from connector_registry import catalog, add_custom
+except ImportError:
+    from agent.connector_registry import catalog, add_custom
 
 PROVIDER_LABELS = {
     "auto": "Auto (online, gdy jest klucz)",
@@ -72,12 +76,6 @@ class SettingsWindow(ctk.CTkToplevel):
         self.refresh_models()
         self.after(250, self._front)
 
-    def _front(self):
-        try:
-            self.lift()
-            self.focus_force()
-        except tk.TclError:
-            pass
 
     def selected_provider(self):
         return next((key for key, text in PROVIDER_LABELS.items() if text == self.provider_var.get()), "auto")
@@ -143,6 +141,57 @@ class SettingsWindow(ctk.CTkToplevel):
             self.show_current(info, ok_prefix="Zastosowano")
         except tk.TclError:
             pass
+
+
+class ConnectorWindow(ctk.CTkToplevel):
+    """Safe connector picker. Discovery is metadata-only until explicitly registered."""
+    def __init__(self, app):
+        super().__init__(app)
+        self.app = app
+        self.title("Konektory Jarvisa")
+        self.geometry("760x560")
+        self.configure(fg_color="#0d1420")
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(2, weight=1)
+        ctk.CTkLabel(self, text="KONEKTORY", text_color="#77e6ff", font=ctk.CTkFont(size=18, weight="bold")).grid(row=0, column=0, padx=18, pady=(18, 6), sticky="w")
+        bar = ctk.CTkFrame(self, fg_color="transparent")
+        bar.grid(row=1, column=0, padx=18, pady=6, sticky="ew")
+        bar.grid_columnconfigure(0, weight=1)
+        self.query = ctk.CTkEntry(bar, placeholder_text="Szukaj: YouTube, GitHub, OAuth...")
+        self.query.grid(row=0, column=0, sticky="ew")
+        self.query.bind("<KeyRelease>", lambda _: self.refresh())
+        ctk.CTkButton(bar, text="ODŚWIEŻ", width=100, command=self.refresh).grid(row=0, column=1, padx=(8, 0))
+        self.listbox = tk.Listbox(self, bg="#111c2b", fg="#d6e4ee", selectbackground="#27405c", relief="flat", height=18)
+        self.listbox.grid(row=2, column=0, padx=18, pady=8, sticky="nsew")
+        self.info = ctk.CTkLabel(self, text="", text_color="#90a8ba", anchor="w", justify="left", wraplength=700)
+        self.info.grid(row=3, column=0, padx=18, pady=6, sticky="ew")
+        buttons = ctk.CTkFrame(self, fg_color="transparent")
+        buttons.grid(row=4, column=0, padx=18, pady=(4, 16), sticky="e")
+        ctk.CTkButton(buttons, text="DODAJ WYBRANY", command=self.register_selected).grid(row=0, column=0, padx=5)
+        ctk.CTkButton(buttons, text="STWÓRZ WŁASNY", fg_color="#1b2a3d", command=self.create_custom).grid(row=0, column=1, padx=5)
+        self.items = []
+        self.refresh()
+
+    def refresh(self):
+        self.items = catalog(self.query.get())
+        self.listbox.delete(0, "end")
+        for item in self.items:
+            state = "zarejestrowany" if item["registered"] else "katalog"
+            self.listbox.insert("end", f"{item['service']}  |  {item['kind']}  |  {state}")
+        self.info.configure(text="Katalog nie przechowuje sekretów. Dodanie oznacza tylko przygotowanie konektora; dostęp wymaga osobnego OAuth/API i testu połączenia.")
+
+    def register_selected(self):
+        selection = self.listbox.curselection()
+        if not selection:
+            self.info.configure(text="Wybierz konektor.")
+            return
+        item = self.items[selection[0]]
+        add_custom(item["service"], item["kind"], item["scopes"], item["endpoint"])
+        self.refresh()
+        self.info.configure(text=f"Dodano {item['service']}. Otwórz oficjalną stronę dokumentacji i skonfiguruj dostęp przez bezpieczny vault.")
+
+    def create_custom(self):
+        self.info.configure(text="Tworzenie własnego konektora: użyj w czacie Jarvisa skillu connector_manager z akcją create, podając oficjalny endpoint i zakresy. Sekrety dodaj wyłącznie przez vault.")
 
 
 class JarvisGUI(ctk.CTk):
@@ -227,6 +276,7 @@ class JarvisGUI(ctk.CTk):
         for mode in MODES:
             self.mode_menu.add_radiobutton(label=mode.capitalize(), value=mode, variable=self.mode_var, command=lambda m=mode: self.change_mode(m))
         self.menu.add_command(label="Ustawienia modelu...", command=self.open_settings)
+        self.menu.add_command(label="Konektory...", command=self.open_connectors)
         self.menu.add_cascade(label="Tryb Jarvisa", menu=self.mode_menu)
         self.menu.add_separator()
         self.menu.add_command(label="WyczyÅ›Ä‡ okno rozmowy", command=self.clear_chat)
@@ -244,6 +294,9 @@ class JarvisGUI(ctk.CTk):
             self.settings_window.focus_force()
             return
         self.settings_window = SettingsWindow(self)
+
+    def open_connectors(self):
+        ConnectorWindow(self)
 
     def change_mode(self, mode):
         self.write("SYSTEM", self.jarvis.set_mode(mode))
