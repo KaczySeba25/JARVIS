@@ -24,7 +24,8 @@ def main():
     assert "ready" in j.run_skill("integration_diagnostics")
     assert "review_required" in j.run_skill("runtime_cycle", "smoke")
     assert "diagnostics.html" in j.run_skill("diagnostics_panel")
-    assert "build_all" in j.run_skill("skill_builder", "invalid")
+    # High-risk skills must remain blocked when no confirmation is granted.
+    assert "anulowana" in j.run_skill("skill_builder", "invalid")
     findings = audit_skills(Path(__file__).parents[1] / "skills")
     assert findings and all(item.score >= 60 for item in findings)
     print("JARVIS_SMOKE_TESTS: PASS")

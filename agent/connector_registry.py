@@ -35,3 +35,21 @@ def catalog(query=""):
 
 def add_custom(service, kind="api", scopes=None, endpoint=""):
     return save(service, kind, scopes, endpoint)
+
+def ensure(service, kind="api", scopes=None, endpoint=""):
+    """Prepare a connector from the catalogue without claiming access."""
+    wanted = str(service or "").strip().lower()
+    match = next((item for item in CATALOG if item["service"] == wanted), None)
+    if match:
+        current = _read().get(wanted)
+        if not current:
+            save(match["service"], match["kind"], match["scopes"], match["endpoint"])
+        return {"service": wanted, "prepared": True, "connected": bool(current and current.get("enabled")),
+                "requires_auth": True, "official_endpoint": match["endpoint"],
+                "next": "Użyj api_onboarding i secret_request; nie wklejaj sekretu do czatu."}
+    if not endpoint:
+        return {"service": wanted, "prepared": False, "connected": False, "requires_auth": True,
+                "error": "unknown_service_requires_official_endpoint"}
+    saved = save(wanted, kind, scopes, endpoint)
+    return {**saved, "prepared": True, "connected": False, "requires_auth": True,
+            "next": "Zweryfikuj oficjalną dokumentację i wykonaj onboarding OAuth/API."}

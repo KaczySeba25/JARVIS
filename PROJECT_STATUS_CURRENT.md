@@ -86,6 +86,13 @@ więc próbę zatrzymano bez działań zewnętrznych. Nie deklaruję ukończenia
 utworzenia konta; wymaga to działającego modelu o akceptowalnej szybkości, konkretnego OAuth
 Google/YouTube i późniejszej akceptacji planu.
 
+Router modeli został następnie wzmocniony: w trybie auto porządkuje lokalne modele według
+przydatności i przewidywanego kosztu CPU, nie wybiera arbitralnie dużego modelu, ma ograniczony
+timeout oraz przechodzi do kolejnego jawnie skonfigurowanego providera/modelu po błędzie. Obsługiwane
+są skonfigurowane źródła Groq, Gemini, OpenAI i Ollama; router nie odkrywa przypadkowych darmowych
+API. Konektor manager ma akcję `ensure`, która przygotowuje metadane usługi z katalogu lub z
+oficjalnego endpointu, ale nie tworzy sekretu, konta ani fałszywego statusu połączenia.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.
