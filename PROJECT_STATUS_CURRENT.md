@@ -57,6 +57,9 @@ Dodano `api_onboarding`: Jarvis może otworzyć oficjalną stronę konfiguracji 
 przekazać użytkownikowi dokładne instrukcje, poczekać na bezpieczne zapisanie danych i wznowić
 zadanie po `gotowe`. Samo otwarcie strony nie jest traktowane jako uzyskanie dostępu.
 
+Punkt 1 z nowego zestawu 8 rozszerzeń jest wdrożony: `task_center` udostępnia trwały status,
+timeline, oczekujące zgody i oczekiwanie na użytkownika dla każdego zadania.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.
