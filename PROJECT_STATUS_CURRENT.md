@@ -53,6 +53,10 @@ Rozpoczęto Etap 3: `secret_request` otwiera lokalne okno bezpiecznego przekazan
 Login, hasło, token lub klucz API trafia bezpośrednio do DPAPI vaultu; nie przechodzi przez
 czat, pamięć ani zwykły plik.
 
+Dodano `api_onboarding`: Jarvis może otworzyć oficjalną stronę konfiguracji API/OAuth,
+przekazać użytkownikowi dokładne instrukcje, poczekać na bezpieczne zapisanie danych i wznowić
+zadanie po `gotowe`. Samo otwarcie strony nie jest traktowane jako uzyskanie dostępu.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.

@@ -459,6 +459,17 @@ class JarvisCore:
                                         self._progress("waiting_user", "Przeglądarka wymaga Twojej interwencji.", url=browser_result.get("url"))
                                         answer = "Przeglądarka wymaga Twojego kroku (np. CAPTCHA, SMS lub 2FA). Wykonaj go w otwartym oknie, a następnie napisz ‘gotowe’. Nie wysyłaj hasła ani kodu w czacie."
                                         break
+                                if name in {"secret_request", "api_onboarding"}:
+                                    try:
+                                        handoff_result = json.loads(result) if isinstance(result, str) else result
+                                    except (TypeError, json.JSONDecodeError):
+                                        handoff_result = {}
+                                    if handoff_result.get("needs_secure_input") or handoff_result.get("human_required"):
+                                        task_runtime.set_status(self.active_task_id, "waiting_user")
+                                        self.current_task.transition(State.WAITING_USER)
+                                        self._progress("waiting_user", "Czeka na bezpieczne przekazanie dostępu.", service=handoff_result.get("service"), url=handoff_result.get("url"))
+                                        answer = "Otworzyłem bezpieczny krok przekazania dostępu. Wykonaj go poza czatem, zapisz dane w vault, a potem napisz ‘gotowe’."
+                                        break
                                 if name == "universal_login":
                                     try:
                                         handoff_result = json.loads(result)
