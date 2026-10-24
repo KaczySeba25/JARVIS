@@ -255,8 +255,8 @@ class JarvisCore:
         skills = self.skills()
         risk_label = {"low": "niskie", "medium": "umiarkowane", "high": "wysokie", "critical": "krytyczne"}
         names = "\n".join(
-            f"- {s.name}: {s.description} (ryzyko: {risk_label.get(s.risk, s.risk)}"
-            + (f"; przegląd {s.last_verified}; źródła {s.source_count}" if s.last_verified else "") + ")"
+            f"- {s.name} (ryzyko: {risk_label.get(s.risk, s.risk)}; "
+            + ("sieć" if s.needs_network else "lokalny") + ")"
             for s in skills
         ) or "brak"
         return personality_prompt(mode=self.mode) + JARVIS_RULES.replace("{{SKILLS}}", names)

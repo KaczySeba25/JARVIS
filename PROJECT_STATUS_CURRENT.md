@@ -111,6 +111,11 @@ metadanych konektora i lokalnego projektu. Nie rozszerza to uprawnień do konta,
 płatności. Kolejna próba autonomicznego uruchomienia zakończyła się błędem providera modelu przed
 decyzją, więc zadanie nie zostało przedstawione jako ukończone.
 
+Skrócono również listę skilli w promptcie systemowym z pełnych opisów do zwartego katalogu nazw,
+ryzyka i trybu sieciowego. Ma to zmniejszyć zużycie kontekstu oraz opóźnienie planowania, bez
+odbierania modelowi informacji o dostępnych narzędziach. Próba po tej zmianie nadal nie dała
+decyzji w rozsądnym czasie na aktualnym providerze, więc agent YouTube pozostaje nieukończony.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.
