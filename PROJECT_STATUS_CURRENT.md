@@ -60,6 +60,13 @@ zadanie po `gotowe`. Samo otwarcie strony nie jest traktowane jako uzyskanie dos
 Punkt 1 z nowego zestawu 8 rozszerzeń jest wdrożony: `task_center` udostępnia trwały status,
 timeline, oczekujące zgody i oczekiwanie na użytkownika dla każdego zadania.
 
+Punkt 4 wdrożony jako działający runner: `regression_runner` wykonuje ograniczoną kompilację
+Python i inwentaryzuje testy projektu, a wynik zapisuje jako wykonaną kontrolę zamiast pustej obietnicy.
+Punkt 7 wdrożony jako bezpieczny fundament: `project_learning` zapisuje tylko fakty z inventory,
+bez kopiowania treści plików, i dodaje lekcję do governance.
+Punkt 8 wdrożony: `operator_mode` i `safety_policy` opisują tryb nadzorowany, wymaganie planu
+i kroki wymagające człowieka.
+
 Punkt 2 rozpoczęty: `connector_manager` rejestruje jawne konektory API/OAuth/przeglądarki wraz
 z zakresem i endpointem. Nowy konektor jest domyślnie wyłączony i wymaga testu połączenia.
 

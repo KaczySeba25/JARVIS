@@ -40,7 +40,12 @@ def execute(name, argument=None):
     if name == "sandbox_runner":
         return {"isolated": False, "executed": False, "reason": "No operating-system sandbox is configured.", "target": value}
     if name == "regression_runner":
-        return {"target": value, "tests": ["compile", "contract", "smoke", "security"], "regression_free": None, "executed": False}
+        try:
+            from regression import run
+            result = run(value or str(ROOT))
+            return {"target": value or str(ROOT), "tests": ["python_compile", "test_inventory"], "regression_free": result.get("passed", False), "executed": True, "result": result}
+        except Exception as exc:
+            return {"target": value, "regression_free": False, "executed": False, "error": type(exc).__name__}
     if name == "uncertainty_manager":
         return {"statement": value, "classification": "unverified", "confidence": 0.0, "needs_source": True}
     if name == "version_manager":
