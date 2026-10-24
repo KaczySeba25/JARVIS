@@ -100,6 +100,11 @@ przeszło planowanie i zatrzymało się na `waiting_approval` przed onboardingie
 działaniami zewnętrznymi. To oznacza prawidłowe działanie bramki bezpieczeństwa, a nie awarię.
 Poprawiono też polskie napisy dashboardu, w tym znaki diakrytyczne i symbole menu.
 
+Przekazano również zatwierdzenie planu YouTube (`zatwierdzam plan`). Jarvis przyjął zgodę,
+ale pełna realizacja ponownie okazała się zbyt wolna przy dużym promptcie na dostępnej konfiguracji.
+Router otrzymał większy budżet odpowiedzi i niski poziom reasoning dla GPT-OSS; wykonanie agenta
+YouTube nadal nie jest ukończone i nie wykonano publikacji ani działań na koncie.
+
 Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.

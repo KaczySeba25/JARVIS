@@ -131,6 +131,11 @@ class ModelRouter:
     def complete(self, messages, **kwargs):
         if not self.client:
             raise RuntimeError(self.warning or "Nie skonfigurowano modelu online ani nie znaleziono uruchomionego modelu lokalnego.")
+        if self.provider.startswith("hosted:groq") and "reasoning_effort" not in kwargs and "gpt-oss" in self.model:
+            # Groq GPT-OSS can spend the whole small completion budget on hidden
+            # reasoning and return an empty message. Keep a useful answer budget.
+            kwargs["reasoning_effort"] = "low"
+            kwargs["max_tokens"] = max(int(kwargs.get("max_tokens", 2048)), 8192)
         errors = []
         candidates = [(self.provider, self.model, self.client)] + [
             (provider, model, OpenAI(api_key=key, base_url=base, timeout=float(os.getenv("JARVIS_MODEL_TIMEOUT", "20"))))
