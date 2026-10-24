@@ -4,6 +4,13 @@
 **Folder projektu:** `C:\Jarvis`  
 **Jezyk rozmowy z Sebastianem:** polski, prosty i bez niepotrzebnego zargonu.
 
+## Tavily
+
+Globalny Tavily CLI jest zainstalowany i uwierzytelniony przez OAuth. Działa testowe wyszukiwanie
+live, a oficjalne skille Tavily (`tavily-cli`, `tavily-search`, `tavily-extract`, `tavily-map`,
+`tavily-crawl`, `tavily-research`, `tavily-dynamic-search` i `tavily-best-practices`) są zainstalowane
+globalnie dla Codex. Nie dodano Tavily do kodu aplikacji ani nie zapisano klucza w repozytorium.
+
 ## O co chodzi w Jarvisie
 
 Jarvis ma byc uniwersalnym pomocnikiem pracujacym na komputerze i w internecie. Ma rozumiec zwykle polecenia, zdobywac potrzebna wiedze, przygotowywac plan, wykonywac uzgodnione kroki, naprawiac bledy i pokazywac dowody rezultatu. Nie jest z gory systemem do sklepu, tradingu, SaaS ani zadnej innej branzy. To przyklady trudnych zadan, ktore Jarvis ma kiedys umiec wykonac na zlecenie. Jarvis nie steruje inteligentnym domem.
@@ -161,6 +168,10 @@ z lewym panelem nawigacji, nowa rozmowa, panelem narzedzi, czytelnym czatem i pa
 Zmienione pliki przechodza kompilacje Python w `agent/venv`.
 
 ## Materialy i wersje dokumentow
+
+Dodano `JARVIS_PROJECT_HANDOFF.md` — szczegolowy opis architektury, uruchamiania, modeli,
+skilli, vaultu, konektorow, ograniczen, testow, synchronizacji Git oraz zalecanej kolejnosci
+dalszej pracy dla kolejnego modelu.
 
 Wczesniejsze notatki o Imperium, generatorze, SaaS, tradingu, sklepie i opisie Jarvisa sa zarchiwizowane w `reference\historical_user_documents\`. Wiele plikow ma date sprzed projektu Jarvis. Niektore sa powielone, nieaktualne lub sprzeczne z pozniejszymi ustaleniami. Traktuj je jako material do zrozumienia historii i pomyslow, nie jako instrukcje dla Jarvisa. Zestawienie i sumy plikow sa w `reference\historical_user_documents\INDEX.md`.
 
