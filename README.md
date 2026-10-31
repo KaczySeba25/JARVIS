@@ -21,6 +21,11 @@ Copy `agent/.env.example` to `agent/.env` for the optional settings. Keep real k
 - Local memory controls, task history and a visible progress/evidence panel.
 - A workspace-only project writer, bounded no-shell project checks, and a visible demo runner.
 - A manual sign-in handoff that never asks for the user's password in chat.
+- A local Ollama model manager in the desktop settings: list installed models, pull a model with streamed progress, select it, and remove it locally.
+
+### Local model management
+
+Open **Menu → Ustawienia modelu → Zarządzaj modelami Ollama**. Jarvis can use an already running local Ollama instance, show installed models, and download a selected model through the local `ollama` program. This does not create an account, send API keys, or enable a paid service. The model download itself requires an internet connection and local disk space.
 
 The skill list includes both working tools and early-stage helpers. A skill's presence in the folder does not by itself mean the whole capability is finished. Start new work with [the current project status](PROJECT_STATUS_CURRENT.md), then see [the agreed Jarvis vision](JARVIS_VISION.md) and [the roadmap](ROADMAP.md). Historical source documents are kept in `reference/historical_user_documents/` and are not standing instructions.
 

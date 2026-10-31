@@ -11,6 +11,14 @@ live, a oficjalne skille Tavily (`tavily-cli`, `tavily-search`, `tavily-extract`
 `tavily-crawl`, `tavily-research`, `tavily-dynamic-search` i `tavily-best-practices`) są zainstalowane
 globalnie dla Codex. Nie dodano Tavily do kodu aplikacji ani nie zapisano klucza w repozytorium.
 
+## Menedżer modeli lokalnych — wdrożony
+
+Desktopowe ustawienia zawierają okno zarządzania Ollama. Jarvis potrafi sprawdzić lokalny endpoint,
+wyświetlić zainstalowane modele, pobrać model przez lokalne `ollama pull` z widocznym postępem,
+usunąć wybrany model po potwierdzeniu i zapisać adres Ollama oraz wybrany model w ustawieniach.
+Moduł `agent/ollama_manager.py` nie przyjmuje kluczy API i nie tworzy płatnego konta. Test na tym
+komputerze potwierdził działającą Ollama 0.40.11 oraz 7 zainstalowanych modeli.
+
 ## O co chodzi w Jarvisie
 
 Jarvis ma byc uniwersalnym pomocnikiem pracujacym na komputerze i w internecie. Ma rozumiec zwykle polecenia, zdobywac potrzebna wiedze, przygotowywac plan, wykonywac uzgodnione kroki, naprawiac bledy i pokazywac dowody rezultatu. Nie jest z gory systemem do sklepu, tradingu, SaaS ani zadnej innej branzy. To przyklady trudnych zadan, ktore Jarvis ma kiedys umiec wykonac na zlecenie. Jarvis nie steruje inteligentnym domem.

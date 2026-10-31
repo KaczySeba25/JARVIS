@@ -1,4 +1,4 @@
-﻿"""Jarvis desktop cockpit with a visible, persistent task timeline."""
+"""Jarvis desktop cockpit with a visible, persistent task timeline."""
 from __future__ import annotations
 
 import threading
@@ -12,6 +12,7 @@ from jarvis_core import JarvisCore
 import task_runtime
 import user_settings
 import local_provider
+import ollama_manager
 try:
     from connector_registry import catalog, add_custom
 except ImportError:
@@ -60,14 +61,22 @@ class SettingsWindow(ctk.CTkToplevel):
         if prefs["hosted_model"]:
             self.hosted_entry.insert(0, prefs["hosted_model"])
 
+        label("Adres Ollama (lokalny)").grid(row=6, column=0, padx=22, pady=(16, 4), sticky="ew")
+        self.ollama_url_entry = ctk.CTkEntry(self, placeholder_text="http://127.0.0.1:11434")
+        self.ollama_url_entry.grid(row=7, column=0, padx=22, sticky="ew")
+        if prefs["ollama_url"]:
+            self.ollama_url_entry.insert(0, prefs["ollama_url"])
+
         self.hint = ctk.CTkLabel(self, text="", wraplength=500, justify="left", anchor="w", text_color="#90a8ba")
-        self.hint.grid(row=6, column=0, padx=22, pady=(16, 4), sticky="ew")
+        self.hint.grid(row=8, column=0, padx=22, pady=(16, 4), sticky="ew")
         self.current = ctk.CTkLabel(self, text="", wraplength=500, justify="left", anchor="w", text_color="#71f6b5")
-        self.current.grid(row=7, column=0, padx=22, pady=4, sticky="ew")
-        ctk.CTkLabel(self, text="Klucze API i hasła ustawiasz tylko w pliku agent\\.env. Ta strona ich nie zapisuje.", wraplength=500, justify="left", anchor="w", text_color="#698394").grid(row=8, column=0, padx=22, pady=4, sticky="ew")
+        self.current.grid(row=9, column=0, padx=22, pady=4, sticky="ew")
+        ctk.CTkLabel(self, text="Klucze API i hasła ustawiasz tylko w pliku agent\\.env. Ta strona ich nie zapisuje.", wraplength=500, justify="left", anchor="w", text_color="#698394").grid(row=10, column=0, padx=22, pady=4, sticky="ew")
+
+        ctk.CTkButton(self, text="ZARZĄDZAJ MODELAMI OLLAMA", fg_color="#1b2a3d", hover_color="#27405c", command=self.open_model_manager).grid(row=11, column=0, padx=22, pady=(10, 4), sticky="ew")
 
         buttons = ctk.CTkFrame(self, fg_color="transparent")
-        buttons.grid(row=9, column=0, padx=22, pady=(14, 20), sticky="e")
+        buttons.grid(row=12, column=0, padx=22, pady=(14, 20), sticky="e")
         ctk.CTkButton(buttons, text="ZASTOSUJ", width=120, command=self.apply).grid(row=0, column=0, padx=(0, 10))
         ctk.CTkButton(buttons, text="ZAMKNIJ", width=100, fg_color="#2a3445", command=self.destroy).grid(row=0, column=1)
 
@@ -88,7 +97,7 @@ class SettingsWindow(ctk.CTkToplevel):
         elif name.endswith("-cloud"):
             notes.append("Model z końcówką -cloud działa na serwerach Ollamy: Twoje rozmowy opuszczają komputer. Wymaga ollama signin i ollama pull.")
         elif self.selected_provider() == "local":
-            notes.append("Model lokalny działa tylko na tym komputerze. Jarvis sam nie pobiera modeli.")
+            notes.append("Model lokalny działa tylko na tym komputerze. Możesz pobrać go w oknie ‘Zarządzaj modelami Ollama’.")
         else:
             notes.append("Auto: jeśli w .env jest klucz API, użyty będzie model online, w przeciwnym razie lokalny.")
         self.hint.configure(text=" ".join(notes))
@@ -124,7 +133,7 @@ class SettingsWindow(ctk.CTkToplevel):
         local = self.local_box.get().strip()
         if local.startswith("("):
             local = ""
-        user_settings.save(provider=self.selected_provider(), local_model=local, hosted_model=self.hosted_entry.get().strip())
+        user_settings.save(provider=self.selected_provider(), local_model=local, hosted_model=self.hosted_entry.get().strip(), ollama_url=self.ollama_url_entry.get().strip())
         self.current.configure(text="Stosuję ustawienia...", text_color="#90a8ba")
         threading.Thread(target=self._reload, daemon=True).start()
 
@@ -141,6 +150,134 @@ class SettingsWindow(ctk.CTkToplevel):
             self.show_current(info, ok_prefix="Zastosowano")
         except tk.TclError:
             pass
+
+    def open_model_manager(self):
+        ModelManagerWindow(self.app, self)
+
+
+class ModelManagerWindow(ctk.CTkToplevel):
+    """Install and remove local Ollama models without exposing secrets."""
+
+    def __init__(self, app, settings_window=None):
+        super().__init__(app)
+        self.app = app
+        self.settings_window = settings_window
+        self.title("Modele AI — Ollama lokalnie")
+        self.geometry("720x620")
+        self.minsize(620, 520)
+        self.configure(fg_color="#0d1420")
+        self.transient(app)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(3, weight=1)
+        self.cancel_event = threading.Event()
+        self.busy = False
+
+        ctk.CTkLabel(self, text="MODELE AI", text_color="#77e6ff", font=ctk.CTkFont(size=18, weight="bold")).grid(row=0, column=0, padx=20, pady=(18, 4), sticky="w")
+        ctk.CTkLabel(self, text="Modele są pobierane lokalnie przez Ollama. Nie tworzę konta ani płatnej usługi.", text_color="#90a8ba", anchor="w", justify="left", wraplength=650).grid(row=1, column=0, padx=20, pady=(0, 12), sticky="ew")
+
+        install = ctk.CTkFrame(self, fg_color="#111c2b")
+        install.grid(row=2, column=0, padx=20, pady=4, sticky="ew")
+        install.grid_columnconfigure(0, weight=1)
+        self.model_box = ctk.CTkComboBox(install, values=[name for name, _ in ollama_manager.RECOMMENDED_MODELS])
+        self.model_box.set("qwen3.5:4b")
+        self.model_box.grid(row=0, column=0, padx=12, pady=12, sticky="ew")
+        ctk.CTkButton(install, text="POBIERZ / ZAINSTALUJ", width=170, command=self.install).grid(row=0, column=1, padx=(0, 12), pady=12)
+
+        self.listbox = tk.Listbox(self, bg="#111c2b", fg="#d6e4ee", selectbackground="#27405c", relief="flat", height=10)
+        self.listbox.grid(row=3, column=0, padx=20, pady=(14, 8), sticky="nsew")
+        self.listbox.bind("<<ListboxSelect>>", lambda _: self._selection_changed())
+
+        actions = ctk.CTkFrame(self, fg_color="transparent")
+        actions.grid(row=4, column=0, padx=20, pady=4, sticky="ew")
+        ctk.CTkButton(actions, text="ODŚWIEŻ", width=110, command=self.refresh).pack(side="left")
+        self.delete_button = ctk.CTkButton(actions, text="USUŃ WYBRANY", width=140, fg_color="#7f3030", hover_color="#9b3b3b", state="disabled", command=self.delete_selected)
+        self.delete_button.pack(side="left", padx=8)
+        ctk.CTkButton(actions, text="ZAMKNIJ", width=100, fg_color="#2a3445", command=self.destroy).pack(side="right")
+
+        self.status = ctk.CTkLabel(self, text="Sprawdzam Ollama…", text_color="#90a8ba", anchor="w", justify="left", wraplength=650)
+        self.status.grid(row=5, column=0, padx=20, pady=(8, 4), sticky="ew")
+        self.log = ctk.CTkTextbox(self, height=110, state="disabled", fg_color="#111c2b", text_color="#a9bac8")
+        self.log.grid(row=6, column=0, padx=20, pady=(4, 18), sticky="ew")
+        self.refresh()
+
+    def _append_log(self, text):
+        self.log.configure(state="normal")
+        self.log.insert("end", str(text) + "\n")
+        self.log.see("end")
+        self.log.configure(state="disabled")
+
+    def refresh(self):
+        def work():
+            info = ollama_manager.status(user_settings.load().get("ollama_url") or None)
+            found = [str(item.get("name")) for item in info.get("models", []) if item.get("name")]
+            self.after(0, lambda: self._refreshed(info.get("available", False), found))
+        threading.Thread(target=work, daemon=True).start()
+
+    def _refreshed(self, available, found):
+        try:
+            self.listbox.delete(0, "end")
+            for name in found:
+                self.listbox.insert("end", name)
+            self.status.configure(text=(f"Ollama działa. Zainstalowane modele: {len(found)}." if available else "Ollama nie odpowiada. Uruchom Ollama i spróbuj ponownie."), text_color="#71f6b5" if available else "#ffb454")
+            self._selection_changed()
+            if self.settings_window is not None and self.settings_window.winfo_exists():
+                self.settings_window.refresh_models()
+        except tk.TclError:
+            pass
+
+    def _selection_changed(self):
+        try:
+            self.delete_button.configure(state="normal" if self.listbox.curselection() and not self.busy else "disabled")
+        except tk.TclError:
+            pass
+
+    def install(self):
+        if self.busy:
+            return
+        name = self.model_box.get().strip()
+        try:
+            ollama_manager.validate_model(name)
+        except ValueError as exc:
+            self.status.configure(text=str(exc), text_color="#ffb454")
+            return
+        self.busy = True
+        self.cancel_event.clear()
+        self.status.configure(text=f"Pobieram model {name}… To może potrwać.", text_color="#90a8ba")
+        self._append_log(f"START: ollama pull {name}")
+        threading.Thread(target=self._pull_worker, args=(name,), daemon=True).start()
+
+    def _pull_worker(self, name):
+        result = ollama_manager.pull(name, on_line=lambda line: self.after(0, self._append_log, line), cancel_event=self.cancel_event, url=user_settings.load().get("ollama_url") or None)
+        self.after(0, self._pull_done, name, result)
+
+    def _pull_done(self, name, result):
+        self.busy = False
+        self._append_log(result.get("message", "Zakończono."))
+        self.status.configure(text=(f"Model {name} jest gotowy do użycia." if result.get("ok") else result.get("message", "Instalacja nie powiodła się.")), text_color="#71f6b5" if result.get("ok") else "#ffb454")
+        self.refresh()
+
+    def delete_selected(self):
+        selection = self.listbox.curselection()
+        if not selection or self.busy:
+            return
+        name = self.listbox.get(selection[0])
+        if not messagebox.askyesno("Usuń model", f"Usunąć lokalny model {name}?", parent=self):
+            return
+        self.busy = True
+        self.status.configure(text=f"Usuwam {name}…", text_color="#90a8ba")
+        def work():
+            try:
+                ollama_manager.delete(name, user_settings.load().get("ollama_url") or None)
+                result = {"ok": True, "message": f"Usunięto model {name}."}
+            except Exception as exc:
+                result = {"ok": False, "message": f"Nie udało się usunąć modelu ({type(exc).__name__})."}
+            self.after(0, lambda: self._delete_done(result))
+        threading.Thread(target=work, daemon=True).start()
+
+    def _delete_done(self, result):
+        self.busy = False
+        self.status.configure(text=result["message"], text_color="#71f6b5" if result.get("ok") else "#ffb454")
+        self.refresh()
 
 
 class ConnectorWindow(ctk.CTkToplevel):
