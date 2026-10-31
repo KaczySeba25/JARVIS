@@ -50,7 +50,17 @@ Główne okno `agent/agent_gui.py` ma polski dashboard z lewą nawigacją, centr
 rozmową bezpośrednio pod głową i polem poleceń na dole. Asset `assets/jarvis_hologram_reference.webp`
 jest lokalną bazą twarzy JARVISA. Przy włączonym `voice_output` moduł `agent/local_speech.py`
 korzysta z bezpłatnego Windows SAPI albo lokalnego `pyttsx3`, a GUI animuje wskaźnik ust w czasie
-mówienia. Nie używa płatnego API głosu. Import GUI i testy dymne po zmianie zakończyły się sukcesem.
+mówienia. Nie używa płatnego API głosu. Dodano przycisk `MIKROFON` i polecenie `włącz mikrofon`;
+`agent/voice_input.py` korzysta z obecnego mikrofonu Conexant i polskiej transkrypcji. Test lokalnego
+syntezatora zwrócił `True`, lista urządzeń audio jest dostępna, import GUI i testy dymne zakończyły
+się sukcesem.
+
+## Strategia wiedzy i publiczny GitHub — wdrożona
+
+Skill `research_strategy` dobiera kolejność źródeł: oficjalna dokumentacja i dane pierwotne, następnie
+publiczny GitHub (repozytoria, README, releases i issues), niezależne potwierdzenie oraz społeczność.
+Zwraca linki i ostrzeżenia o wiarygodności. Kod i treści z GitHuba są niezaufanymi danymi: JARVIS nie
+instaluje ani nie uruchamia ich automatycznie. Zasada została dodana także do promptu rdzenia.
 
 ## O co chodzi w Jarvisie
 

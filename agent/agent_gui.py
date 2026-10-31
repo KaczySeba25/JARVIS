@@ -14,6 +14,7 @@ import user_settings
 import local_provider
 import ollama_manager
 import local_speech
+import voice_input
 import skill_lifecycle
 from skill_registry import discover
 from research_engine import search as research_search
@@ -574,6 +575,7 @@ class JarvisGUI(ctk.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.busy = False
         self.speaking = False
+        self.listening = False
         self.avatar_phase = 0
         self.state_text = tk.StringVar(value="GOTOWY")
         self.task_text = tk.StringVar(value="Brak aktywnego zadania")
@@ -629,7 +631,7 @@ class JarvisGUI(ctk.CTk):
         main = ctk.CTkFrame(self, fg_color="#070b14", corner_radius=0)
         main.grid(row=0, column=1, sticky="nsew")
         main.grid_columnconfigure(0, weight=1)
-        main.grid_rowconfigure(1, weight=3)
+        main.grid_rowconfigure(1, weight=4)
         main.grid_rowconfigure(2, weight=2)
         top = ctk.CTkFrame(main, fg_color="transparent", height=68)
         top.grid(row=0, column=0, padx=30, pady=(18, 0), sticky="ew")
@@ -651,14 +653,13 @@ class JarvisGUI(ctk.CTk):
         try:
             image = Image.open(asset).convert("RGBA")
             width, height = image.size
-            image = image.crop((int(width * 0.39), int(height * 0.02), width, int(height * 0.99)))
-            avatar_size = 380
-            self.avatar_image = ctk.CTkImage(light_image=image, dark_image=image, size=(avatar_size, avatar_size))
+            image = image.crop((int(width * 0.25), int(height * 0.01), width, int(height * 0.99)))
+            self.avatar_image = ctk.CTkImage(light_image=image, dark_image=image, size=(380, 280))
             self.avatar_label = ctk.CTkLabel(stage, text="", image=self.avatar_image)
         except Exception:
             self.avatar_label = ctk.CTkLabel(stage, text="JARVIS", text_color="#5de9ff", font=ctk.CTkFont(size=46, weight="bold"))
         self.avatar_label.grid(row=0, column=0, padx=20, pady=12)
-        self.mouth_label = ctk.CTkLabel(stage, text="◡", text_color="#8af3ff", fg_color="transparent", font=ctk.CTkFont(size=26, weight="bold"))
+        self.mouth_label = ctk.CTkLabel(stage, text="◡", text_color="#c4fbff", fg_color="#102a3f", corner_radius=14, width=52, height=28, font=ctk.CTkFont(size=20, weight="bold"))
         self.mouth_label.place(relx=0.51, rely=0.77, anchor="center")
         self.avatar_state = ctk.CTkLabel(avatar_card, text="JARVIS  •  GOTOWY", text_color="#68e9ff", font=ctk.CTkFont(size=12, weight="bold"))
         self.avatar_state.grid(row=1, column=0, pady=(0, 4))
@@ -678,8 +679,10 @@ class JarvisGUI(ctk.CTk):
         self.input = ctk.CTkEntry(bottom, placeholder_text="Napisz, co mam zrobić…", height=52, fg_color="#101f32", border_color="#26516f", corner_radius=16)
         self.input.grid(row=0, column=0, sticky="ew")
         self.input.bind("<Return>", lambda _: self.send())
+        self.mic_button = ctk.CTkButton(bottom, text="MIKROFON", width=120, height=50, corner_radius=15, fg_color="#102a3f", hover_color="#194865", command=self.toggle_microphone)
+        self.mic_button.grid(row=0, column=1, padx=(10, 0))
         self.send_button = ctk.CTkButton(bottom, text="WYŚLIJ  ➤", width=126, height=50, corner_radius=15, fg_color="#176bdb", hover_color="#2588ff", command=self.send)
-        self.send_button.grid(row=0, column=1, padx=(10, 0))
+        self.send_button.grid(row=0, column=2, padx=(10, 0))
         ctk.CTkLabel(main, textvariable=self.footer_text, text_color="#5d7892", font=ctk.CTkFont(size=10), anchor="w").grid(row=4, column=0, padx=30, pady=(0, 12), sticky="w")
 
     def _nav_button(self, parent, row, text, command):
@@ -687,6 +690,42 @@ class JarvisGUI(ctk.CTk):
 
     def focus_chat(self):
         self.input.focus_set()
+
+    def toggle_microphone(self):
+        if self.busy or self.listening:
+            return
+        if not voice_input.available():
+            self.write("SYSTEM", "Mikrofon nie jest dostępny. Zainstaluj lokalne biblioteki audio w środowisku JARVISA.")
+            return
+        self.listening = True
+        self.mic_button.configure(text="SŁUCHAM…", state="disabled", fg_color="#a34d35")
+        self.state_text.set("SŁUCHAM")
+        self.set_avatar_state("SŁUCHAM", "słucham")
+        self.task_text.set("Mów do mikrofonu po sygnale…")
+        threading.Thread(target=self._listen_worker, daemon=True).start()
+
+    def _listen_worker(self):
+        result = voice_input.listen(language="pl-PL")
+        self.after(0, self._voice_result, result)
+
+    def _voice_result(self, result):
+        self.listening = False
+        self.mic_button.configure(text="MIKROFON", state="normal", fg_color="#102a3f")
+        if result.get("ok"):
+            self.input.delete(0, "end")
+            self.input.insert(0, result["text"])
+            self.write("TY (GŁOS)", result["text"])
+            self.input.delete(0, "end")
+            self.busy = True
+            self.send_button.configure(state="disabled")
+            self.state_text.set("PRACUJE")
+            self.set_avatar_state("MYŚLĘ", "myślę")
+            self.task_text.set(result["text"][:180])
+            threading.Thread(target=self.process, args=(result["text"],), daemon=True).start()
+        else:
+            self.state_text.set("GOTOWY")
+            self.set_avatar_state("GOTOWY", "gotowy")
+            self.write("SYSTEM", result.get("message", "Nie udało się rozpoznać mowy."))
 
     def build_menu(self):
         style = {"tearoff": 0, "bg": "#0d1420", "fg": "#d6e4ee", "activebackground": "#27405c", "activeforeground": "#ffffff", "bd": 0}
@@ -818,6 +857,11 @@ class JarvisGUI(ctk.CTk):
             return
         self.input.delete(0, "end")
         self.write("TY", message)
+        normalized = message.lower().replace("ł", "l").strip()
+        if normalized in {"wlacz mikrofon", "uruchom mikrofon", "włącz mikrofon", "zacznij sluchac", "zacznij słuchać"}:
+            self.write("JARVIS", "Włączam mikrofon. Mów po polsku po zmianie statusu na SŁUCHAM.")
+            self.toggle_microphone()
+            return
         self.busy = True
         self.send_button.configure(state="disabled")
         self.state_text.set("PRACUJE")
@@ -880,6 +924,12 @@ class JarvisGUI(ctk.CTk):
 
     def pulse(self):
         self.avatar_phase = (self.avatar_phase + 1) % 4
+        active_avatar = getattr(self, "speaking", False) or getattr(self, "listening", False)
+        if active_avatar:
+            try:
+                self.avatar_label.grid_configure(pady=(10 + (self.avatar_phase % 2) * 3, 10))
+            except (AttributeError, tk.TclError):
+                pass
         if getattr(self, "speaking", False):
             mouths = ("—", "◡", "○", "◠")
             try:

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import base64
 import os
+import re
 import subprocess
 import threading
 
@@ -62,8 +63,22 @@ def _sapi_speak(text: str) -> bool:
 
 def speak(text: str) -> bool:
     """Speak locally; return whether a local engine completed successfully."""
-    clean = " ".join(str(text or "").split()).strip()
+    clean = _speech_text(text)
     if not clean:
         return False
     with _LOCK:
         return _pyttsx3_speak(clean) or _sapi_speak(clean)
+
+
+def _speech_text(text: str) -> str:
+    """Turn a chat answer into natural speech instead of reading formatting aloud."""
+    clean = str(text or "")
+    clean = re.sub(r"```.*?```", " ", clean, flags=re.S)
+    clean = re.sub(r"https?://\S+", " linkiem ", clean)
+    clean = re.sub(r"\b(?:TY|JARVIS|SYSTEM)\s*:\s*", " ", clean, flags=re.I)
+    clean = re.sub(r"[*_#`~>|]", " ", clean)
+    clean = re.sub(r"[{}\[\]()]", " ", clean)
+    clean = clean.replace("•", ", ").replace("→", ", ").replace("—", ", ")
+    clean = re.sub(r"\s*[:;|]\s*", ", ", clean)
+    clean = re.sub(r"\s+", " ", clean).strip()
+    return clean
