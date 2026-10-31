@@ -15,6 +15,15 @@ DEFAULTS = {
     "local_model": "",           # empty: first installed Ollama model
     "hosted_model": "",          # empty: JARVIS_MODEL from .env
     "ollama_url": "",            # empty: JARVIS_OLLAMA_URL or http://127.0.0.1:11434
+    "appearance": "dark",        # dark/light/system; desktop UI preference
+    "accent_color": "blue",      # blue/cyan/purple/green
+    "font_scale": "normal",      # small/normal/large
+    "voice_input": "off",        # off/on; enabled only when local speech tools work
+    "voice_output": "off",       # off/on; enabled only when local TTS works
+    "notifications": "on",       # local progress notifications
+    "compact_mode": "off",       # denser desktop layout
+    "language": "pl",            # pl/en response preference
+    "user_name": "Sebastian",    # name used by the local persona
 }
 
 
@@ -26,6 +35,18 @@ def _clean(data: dict) -> dict:
             result[key] = value.strip()[:200] if isinstance(value, str) else DEFAULTS[key]
     if result["provider"] not in PROVIDERS:
         result["provider"] = "auto"
+    if result["appearance"] not in {"dark", "light", "system"}:
+        result["appearance"] = "dark"
+    if result["accent_color"] not in {"blue", "cyan", "purple", "green"}:
+        result["accent_color"] = "blue"
+    if result["font_scale"] not in {"small", "normal", "large"}:
+        result["font_scale"] = "normal"
+    for key in ("voice_input", "voice_output", "notifications", "compact_mode"):
+        if result[key] not in {"on", "off"}:
+            result[key] = "off" if key != "notifications" else "on"
+    if result["language"] not in {"pl", "en"}:
+        result["language"] = "pl"
+    result["user_name"] = result["user_name"][:80]
     if result["ollama_url"] and not result["ollama_url"].startswith(("http://127.0.0.1", "http://localhost")):
         result["ollama_url"] = ""   # keep prompts and files on this computer
     return result

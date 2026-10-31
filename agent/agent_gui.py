@@ -4,7 +4,7 @@ from __future__ import annotations
 import threading
 import tkinter as tk
 import customtkinter as ctk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 from pathlib import Path
 from PIL import Image
 
@@ -13,6 +13,9 @@ import task_runtime
 import user_settings
 import local_provider
 import ollama_manager
+import skill_lifecycle
+from skill_registry import discover
+from research_engine import search as research_search
 try:
     from connector_registry import catalog, add_custom
 except ImportError:
@@ -280,6 +283,233 @@ class ModelManagerWindow(ctk.CTkToplevel):
         self.refresh()
 
 
+class PersonalizationWindow(ctk.CTkToplevel):
+    """User-facing preferences stored locally and applied without secrets."""
+
+    def __init__(self, app):
+        super().__init__(app)
+        self.app = app
+        self.title("Personalizacja JARVISA")
+        self.geometry("620x620")
+        self.configure(fg_color="#0d1420")
+        self.transient(app)
+        self.grid_columnconfigure(0, weight=1)
+        prefs = user_settings.load()
+        ctk.CTkLabel(self, text="PERSONALIZACJA", text_color="#77e6ff", font=ctk.CTkFont(size=18, weight="bold")).grid(row=0, column=0, padx=22, pady=(20, 4), sticky="w")
+        ctk.CTkLabel(self, text="Ustawienia są lokalne. Nie zawierają haseł, tokenów ani kluczy API.", text_color="#90a8ba", anchor="w", wraplength=560).grid(row=1, column=0, padx=22, pady=(0, 16), sticky="ew")
+        form = ctk.CTkFrame(self, fg_color="#111c2b")
+        form.grid(row=2, column=0, padx=22, pady=4, sticky="ew")
+        form.grid_columnconfigure(1, weight=1)
+
+        self.name = ctk.CTkEntry(form, placeholder_text="Imię")
+        self.name.insert(0, prefs["user_name"])
+        self._row(form, 0, "Jak ma mówić do Ciebie", self.name)
+        self.language = self._menu(form, prefs["language"], {"pl": "Polski", "en": "English"})
+        self._row(form, 1, "Język odpowiedzi", self.language)
+        self.appearance = self._menu(form, prefs["appearance"], {"dark": "Ciemny", "light": "Jasny", "system": "Systemowy"})
+        self._row(form, 2, "Wygląd", self.appearance)
+        self.accent = self._menu(form, prefs["accent_color"], {"blue": "Niebieski", "cyan": "Cyjan", "purple": "Fioletowy", "green": "Zielony"})
+        self._row(form, 3, "Kolor akcentu", self.accent)
+        self.font_scale = self._menu(form, prefs["font_scale"], {"small": "Mały", "normal": "Normalny", "large": "Duży"})
+        self._row(form, 4, "Rozmiar tekstu", self.font_scale)
+        self.voice_input = self._menu(form, prefs["voice_input"], {"off": "Wyłączone", "on": "Włączone"})
+        self._row(form, 5, "Rozpoznawanie mowy", self.voice_input)
+        self.voice_output = self._menu(form, prefs["voice_output"], {"off": "Wyłączone", "on": "Włączone"})
+        self._row(form, 6, "Głos JARVISA", self.voice_output)
+        self.notifications = self._menu(form, prefs["notifications"], {"on": "Włączone", "off": "Wyłączone"})
+        self._row(form, 7, "Powiadomienia lokalne", self.notifications)
+        self.compact = self._menu(form, prefs["compact_mode"], {"off": "Standardowy", "on": "Kompaktowy"})
+        self._row(form, 8, "Układ interfejsu", self.compact)
+
+        self.status = ctk.CTkLabel(self, text="Zmiany zostaną zapisane lokalnie.", text_color="#90a8ba", anchor="w", wraplength=560)
+        self.status.grid(row=3, column=0, padx=22, pady=14, sticky="ew")
+        buttons = ctk.CTkFrame(self, fg_color="transparent")
+        buttons.grid(row=4, column=0, padx=22, pady=(0, 20), sticky="e")
+        ctk.CTkButton(buttons, text="ZAPISZ", width=120, command=self.save).pack(side="left", padx=5)
+        ctk.CTkButton(buttons, text="ZAMKNIJ", width=100, fg_color="#2a3445", command=self.destroy).pack(side="left", padx=5)
+
+    @staticmethod
+    def _menu(parent, value, values):
+        widget = ctk.CTkOptionMenu(parent, values=list(values.values()))
+        widget._jarvis_values = values
+        widget.set(values.get(value, next(iter(values.values()))))
+        return widget
+
+    @staticmethod
+    def _row(parent, index, label, widget):
+        ctk.CTkLabel(parent, text=label, text_color="#d6e4ee", anchor="w").grid(row=index, column=0, padx=14, pady=8, sticky="w")
+        widget.grid(row=index, column=1, padx=14, pady=8, sticky="ew")
+
+    @staticmethod
+    def _value(widget):
+        return next((key for key, label in widget._jarvis_values.items() if label == widget.get()), "")
+
+    def save(self):
+        user_settings.save(
+            user_name=self.name.get().strip(), language=self._value(self.language),
+            appearance=self._value(self.appearance), accent_color=self._value(self.accent),
+            font_scale=self._value(self.font_scale), voice_input=self._value(self.voice_input),
+            voice_output=self._value(self.voice_output), notifications=self._value(self.notifications),
+            compact_mode=self._value(self.compact),
+        )
+        self.app.apply_personalization()
+        self.status.configure(text="Zapisano. Nowe ustawienia wyglądu są aktywne.", text_color="#71f6b5")
+
+
+class SkillsWindow(ctk.CTkToplevel):
+    """Review and install a single skill through the existing validation lifecycle."""
+
+    def __init__(self, app):
+        super().__init__(app)
+        self.app = app
+        self.title("Umiejętności i wtyczki JARVISA")
+        self.geometry("820x620")
+        self.configure(fg_color="#0d1420")
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(2, weight=1)
+        ctk.CTkLabel(self, text="UMIEJĘTNOŚCI I WTYCZKI", text_color="#77e6ff", font=ctk.CTkFont(size=18, weight="bold")).grid(row=0, column=0, padx=20, pady=(18, 4), sticky="w")
+        ctk.CTkLabel(self, text="JARVIS instaluje pojedyncze rozszerzenia dopiero po analizie składni i bezpiecznej kontroli kodu. Nie uruchamiaj nieznanych plików bez sprawdzenia źródła.", text_color="#90a8ba", anchor="w", justify="left", wraplength=760).grid(row=1, column=0, padx=20, pady=(0, 12), sticky="ew")
+        self.listbox = tk.Listbox(self, bg="#111c2b", fg="#d6e4ee", selectbackground="#27405c", relief="flat")
+        self.listbox.grid(row=2, column=0, padx=20, pady=8, sticky="nsew")
+        self.info = ctk.CTkLabel(self, text="", text_color="#90a8ba", anchor="w", justify="left", wraplength=760)
+        self.info.grid(row=3, column=0, padx=20, pady=6, sticky="ew")
+        buttons = ctk.CTkFrame(self, fg_color="transparent")
+        buttons.grid(row=4, column=0, padx=20, pady=(4, 18), sticky="e")
+        ctk.CTkButton(buttons, text="ODŚWIEŻ", width=100, command=self.refresh).pack(side="left", padx=4)
+        ctk.CTkButton(buttons, text="ZAINSTALUJ Z PLIKU", width=160, command=self.install_from_file).pack(side="left", padx=4)
+        ctk.CTkButton(buttons, text="ZAMKNIJ", width=100, fg_color="#2a3445", command=self.destroy).pack(side="left", padx=4)
+        self.refresh()
+
+    def refresh(self):
+        self.listbox.delete(0, "end")
+        items = discover(Path(__file__).resolve().parent.parent / "skills")
+        for item in items:
+            state = "gotowe" if item.has_run and item.has_module_doc else "wymaga przeglądu"
+            self.listbox.insert("end", f"{item.name} | ryzyko: {item.risk} | {state}")
+        self.info.configure(text=f"Znaleziono {len(items)} umiejętności. Instalacja z pliku trafia najpierw do wersji roboczej i przechodzi walidację.")
+
+    def install_from_file(self):
+        path = filedialog.askopenfilename(parent=self, title="Wybierz plik umiejętności Python", filetypes=[("Python", "*.py"), ("Wszystkie pliki", "*.*")])
+        if not path:
+            return
+        try:
+            source = Path(path)
+            code = source.read_text(encoding="utf-8")
+            draft = skill_lifecycle.create_draft(source.stem, code)
+            report = skill_lifecycle.validate(source.stem)
+            if not (report.get("syntax") and report.get("execution")):
+                self.info.configure(text="Odrzucono rozszerzenie. Walidacja: " + "; ".join(report.get("errors", [])[:3]), text_color="#ffb454")
+                return
+            if messagebox.askyesno("Aktywować umiejętność?", f"Walidacja przeszła. Aktywować {source.stem} jako nową umiejętność wysokiego ryzyka?", parent=self):
+                result = skill_lifecycle.promote(source.stem, confirm=True, metadata={"source": "user_file", "path": str(source)})
+                self.info.configure(text=result, text_color="#71f6b5")
+                self.refresh()
+            else:
+                self.info.configure(text=f"Zweryfikowany draft pozostawiono lokalnie: {draft}")
+        except Exception as exc:
+            self.info.configure(text=f"Nie udało się zainstalować umiejętności ({type(exc).__name__}).", text_color="#ffb454")
+
+
+class APIDiscoveryWindow(ctk.CTkToplevel):
+    """Read-only public API discovery with optional metadata-only connector preparation."""
+
+    def __init__(self, app):
+        super().__init__(app)
+        self.app = app
+        self.title("Znajdź darmowe i publiczne API")
+        self.geometry("900x680")
+        self.configure(fg_color="#0d1420")
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(3, weight=1)
+        ctk.CTkLabel(self, text="RESEARCH PUBLICZNYCH API", text_color="#77e6ff", font=ctk.CTkFont(size=18, weight="bold")).grid(row=0, column=0, padx=20, pady=(18, 4), sticky="w")
+        ctk.CTkLabel(self, text="Wyniki są tylko materiałem do oceny. JARVIS nie podłącza losowego API, nie wysyła sekretów i nie tworzy kont bez Twojej decyzji.", text_color="#90a8ba", anchor="w", wraplength=850).grid(row=1, column=0, padx=20, pady=(0, 12), sticky="ew")
+        bar = ctk.CTkFrame(self, fg_color="transparent")
+        bar.grid(row=2, column=0, padx=20, pady=4, sticky="new")
+        bar.grid_columnconfigure(0, weight=1)
+        self.query = ctk.CTkEntry(bar, placeholder_text="np. pogoda, produkty, kursy walut, generowanie obrazów")
+        self.query.grid(row=0, column=0, sticky="ew")
+        self.search_button = ctk.CTkButton(bar, text="SZUKAJ", width=110, command=self.search)
+        self.search_button.grid(row=0, column=1, padx=(8, 0))
+        self.results = tk.Listbox(self, bg="#111c2b", fg="#d6e4ee", selectbackground="#27405c", relief="flat")
+        self.results.grid(row=3, column=0, padx=20, pady=10, sticky="nsew")
+        self.info = ctk.CTkLabel(self, text="Wpisz temat i rozpocznij research.", text_color="#90a8ba", anchor="w", justify="left", wraplength=850)
+        self.info.grid(row=4, column=0, padx=20, pady=6, sticky="ew")
+        ctk.CTkButton(self, text="PRZYGOTUJ KONEKTOR (TYLKO METADANE)", fg_color="#1b2a3d", command=self.prepare_connector).grid(row=5, column=0, padx=20, pady=(4, 18), sticky="e")
+        self.items = []
+
+    def search(self):
+        query = self.query.get().strip()
+        if not query:
+            self.info.configure(text="Podaj temat researchu.")
+            return
+        self.search_button.configure(state="disabled")
+        self.info.configure(text="Szukam oficjalnych i publicznych źródeł…")
+        threading.Thread(target=self._search_worker, args=(query,), daemon=True).start()
+
+    def _search_worker(self, query):
+        try:
+            items = research_search(query + " free public API official documentation", 8)
+            self.after(0, self._show_results, items)
+        except Exception as exc:
+            self.after(0, lambda: self.info.configure(text=f"Research nie powiódł się ({type(exc).__name__}).", text_color="#ffb454"))
+            self.after(0, lambda: self.search_button.configure(state="normal"))
+
+    def _show_results(self, items):
+        self.items = items or []
+        self.results.delete(0, "end")
+        for item in self.items:
+            self.results.insert("end", f"{item.get('title', 'Źródło')} | {item.get('url', '')}")
+        self.info.configure(text=f"Znaleziono {len(self.items)} źródeł. Wybierz wynik, aby obejrzeć opis.", text_color="#71f6b5" if self.items else "#ffb454")
+        self.search_button.configure(state="normal")
+
+    def prepare_connector(self):
+        selection = self.results.curselection()
+        if not selection:
+            self.info.configure(text="Najpierw wybierz wynik.")
+            return
+        item = self.items[selection[0]]
+        from connector_registry import add_custom
+        service = "api_" + "".join(ch if ch.isalnum() else "_" for ch in item.get("title", "public").lower())[:48].strip("_")
+        add_custom(service, "api", ["public-documentation-review"], item.get("url", ""))
+        self.info.configure(text=f"Przygotowano metadane konektora {service}. Nie jest połączony i nie ma dostępu do sekretów.", text_color="#71f6b5")
+
+
+class TaskCenterWindow(ctk.CTkToplevel):
+    """Inspect durable local task records without changing their state."""
+
+    def __init__(self, app):
+        super().__init__(app)
+        self.title("Centrum zadań JARVISA")
+        self.geometry("860x620")
+        self.configure(fg_color="#0d1420")
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
+        ctk.CTkLabel(self, text="CENTRUM ZADAŃ", text_color="#77e6ff", font=ctk.CTkFont(size=18, weight="bold")).grid(row=0, column=0, padx=20, pady=(18, 8), sticky="w")
+        self.listbox = tk.Listbox(self, bg="#111c2b", fg="#d6e4ee", selectbackground="#27405c", relief="flat")
+        self.listbox.grid(row=1, column=0, padx=20, pady=8, sticky="nsew")
+        self.info = ctk.CTkLabel(self, text="", text_color="#90a8ba", anchor="w", justify="left", wraplength=800)
+        self.info.grid(row=2, column=0, padx=20, pady=6, sticky="ew")
+        ctk.CTkButton(self, text="ODŚWIEŻ", width=110, command=self.refresh).grid(row=3, column=0, padx=20, pady=(4, 18), sticky="e")
+        self.refresh()
+
+    def refresh(self):
+        self.listbox.delete(0, "end")
+        events = task_runtime.recent(100)
+        latest = {}
+        for event in events:
+            latest[event["task_id"]] = event
+        for task_id, event in latest.items():
+            self.listbox.insert("end", f"{event['stage'].upper():18} | {task_id[:10]} | {event['message']}")
+        pending = task_runtime.latest_pending()
+        waiting = task_runtime.latest_waiting_user()
+        flags = []
+        if pending:
+            flags.append("oczekuje plan do akceptacji")
+        if waiting:
+            flags.append("oczekuje na krok użytkownika")
+        self.info.configure(text=f"Pokazano {len(latest)} ostatnich zadań. " + ("; ".join(flags) + "." if flags else "Brak oczekujących blokad."))
+
+
 class ConnectorWindow(ctk.CTkToplevel):
     """Safe connector picker. Discovery is metadata-only until explicitly registered."""
     def __init__(self, app):
@@ -348,6 +578,7 @@ class JarvisGUI(ctk.CTk):
         self.settings_window = None
         self.jarvis = JarvisCore(confirm=self.confirm_action, progress_callback=self.on_progress)
         self.build()
+        self.apply_personalization()
         self.refresh_status()
         self._restore_task_timeline()
         self.after(120, self.pulse)
@@ -420,6 +651,10 @@ class JarvisGUI(ctk.CTk):
             self.mode_menu.add_radiobutton(label=mode.capitalize(), value=mode, variable=self.mode_var, command=lambda m=mode: self.change_mode(m))
         self.menu.add_command(label="Ustawienia modelu...", command=self.open_settings)
         self.menu.add_command(label="Konektory...", command=self.open_connectors)
+        self.menu.add_command(label="Umiejętności i wtyczki...", command=self.open_skills)
+        self.menu.add_command(label="Znajdź darmowe API...", command=self.open_api_discovery)
+        self.menu.add_command(label="Personalizacja...", command=self.open_personalization)
+        self.menu.add_command(label="Centrum zadań...", command=self.open_task_center)
         self.menu.add_cascade(label="Tryb Jarvisa", menu=self.mode_menu)
         self.menu.add_separator()
         self.menu.add_command(label="Wyczyść okno rozmowy", command=self.clear_chat)
@@ -440,6 +675,35 @@ class JarvisGUI(ctk.CTk):
 
     def open_connectors(self):
         ConnectorWindow(self)
+
+    def open_skills(self):
+        SkillsWindow(self)
+
+    def open_api_discovery(self):
+        APIDiscoveryWindow(self)
+
+    def open_personalization(self):
+        PersonalizationWindow(self)
+
+    def open_task_center(self):
+        TaskCenterWindow(self)
+
+    def apply_personalization(self):
+        prefs = user_settings.load()
+        accents = {"blue": "#3b82f6", "cyan": "#06b6d4", "purple": "#8b5cf6", "green": "#10b981"}
+        accent = accents.get(prefs["accent_color"], accents["blue"])
+        dark = prefs["appearance"] != "light"
+        base = "#212121" if dark else "#f2f5f8"
+        panel = "#171717" if dark else "#ffffff"
+        try:
+            self.configure(fg_color=base)
+            self.chat.configure(fg_color=base, text_color="#f2f2f2" if dark else "#1f2937")
+            self.progress_view.configure(fg_color=panel)
+            self.send_button.configure(fg_color=accent, hover_color=accent)
+            self.menu_button.configure(fg_color="#3a3a3a" if dark else "#dbe4ee")
+            self.footer_text.set(self.footer_text.get() + f"  •  AKCENT: {prefs['accent_color'].upper()}")
+        except (AttributeError, tk.TclError):
+            pass
 
     def change_mode(self, mode):
         self.write("SYSTEM", self.jarvis.set_mode(mode))
