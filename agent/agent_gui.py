@@ -6,7 +6,7 @@ import tkinter as tk
 import customtkinter as ctk
 from tkinter import messagebox, filedialog
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageOps, ImageTk
 
 from jarvis_core import JarvisCore
 import task_runtime
@@ -649,18 +649,9 @@ class JarvisGUI(ctk.CTk):
         stage.grid(row=0, column=0, padx=18, pady=18, sticky="nsew")
         stage.grid_columnconfigure(0, weight=1)
         stage.grid_rowconfigure(0, weight=1)
-        asset = Path(__file__).resolve().parent.parent / "assets" / "jarvis_hologram_reference.webp"
-        try:
-            image = Image.open(asset).convert("RGBA")
-            width, height = image.size
-            image = image.crop((int(width * 0.25), int(height * 0.01), width, int(height * 0.99)))
-            self.avatar_image = ctk.CTkImage(light_image=image, dark_image=image, size=(380, 280))
-            self.avatar_label = ctk.CTkLabel(stage, text="", image=self.avatar_image)
-        except Exception:
-            self.avatar_label = ctk.CTkLabel(stage, text="JARVIS", text_color="#5de9ff", font=ctk.CTkFont(size=46, weight="bold"))
-        self.avatar_label.grid(row=0, column=0, padx=20, pady=12)
-        self.mouth_label = ctk.CTkLabel(stage, text="◡", text_color="#c4fbff", fg_color="#102a3f", corner_radius=14, width=52, height=28, font=ctk.CTkFont(size=20, weight="bold"))
-        self.mouth_label.place(relx=0.51, rely=0.77, anchor="center")
+        self.avatar_canvas = tk.Canvas(stage, width=820, height=380, bg="#08111e", highlightthickness=0, bd=0)
+        self.avatar_canvas.grid(row=0, column=0, padx=8, pady=8, sticky="nsew")
+        self._build_avatar_canvas()
         self.avatar_state = ctk.CTkLabel(avatar_card, text="JARVIS  •  GOTOWY", text_color="#68e9ff", font=ctk.CTkFont(size=12, weight="bold"))
         self.avatar_state.grid(row=1, column=0, pady=(0, 4))
         ctk.CTkLabel(avatar_card, textvariable=self.task_text, text_color="#7f9aae", anchor="center", wraplength=900).grid(row=2, column=0, padx=20, pady=(0, 14), sticky="ew")
@@ -685,6 +676,35 @@ class JarvisGUI(ctk.CTk):
         self.send_button.grid(row=0, column=2, padx=(10, 0))
         ctk.CTkLabel(main, textvariable=self.footer_text, text_color="#5d7892", font=ctk.CTkFont(size=10), anchor="w").grid(row=4, column=0, padx=30, pady=(0, 12), sticky="w")
 
+    def _build_avatar_canvas(self):
+        """Build a full-face hologram with scan, motion and speech overlays."""
+        canvas = self.avatar_canvas
+        canvas.delete("all")
+        self.avatar_tick = 0
+        self.avatar_face_x = 410
+        self.avatar_face_y = 190
+        canvas.create_text(28, 26, text="HOLOGRAM // JARVIS", anchor="w", fill="#70eaff", font=("Segoe UI", 10, "bold"))
+        canvas.create_text(792, 26, text="LIVE", anchor="e", fill="#55e6b0", font=("Segoe UI", 10, "bold"))
+        canvas.create_text(28, 350, text="SYSTEM CORE  •  NEURAL VISUALIZER", anchor="w", fill="#4c7187", font=("Segoe UI", 9))
+        canvas.create_text(792, 350, text="VOICE / VISION / ACTION", anchor="e", fill="#4c7187", font=("Segoe UI", 9))
+        self.avatar_ring_outer = canvas.create_oval(188, 22, 632, 358, outline="#123e56", width=2)
+        self.avatar_ring_inner = canvas.create_oval(216, 48, 604, 332, outline="#1a6c86", width=1)
+        asset = Path(__file__).resolve().parent.parent / "assets" / "jarvis_hologram_reference.webp"
+        try:
+            image = Image.open(asset).convert("RGBA")
+            width, height = image.size
+            image = image.crop((int(width * 0.18), 0, width, height))
+            image = ImageOps.contain(image, (590, 330), Image.Resampling.LANCZOS)
+            self.avatar_photo = ImageTk.PhotoImage(image)
+            self.avatar_face = canvas.create_image(self.avatar_face_x, self.avatar_face_y, image=self.avatar_photo)
+        except Exception:
+            self.avatar_photo = None
+            self.avatar_face = canvas.create_text(410, 190, text="JARVIS", fill="#5de9ff", font=("Segoe UI", 52, "bold"))
+        self.avatar_scan = canvas.create_line(170, 80, 650, 80, fill="#56eaff", width=2)
+        self.avatar_mouth_glow = canvas.create_oval(365, 260, 455, 276, outline="#1d88a7", width=5)
+        self.avatar_mouth = canvas.create_oval(370, 262, 450, 274, outline="#c7fbff", width=2)
+        canvas.create_text(410, 318, text="SYNTHETIC PRESENCE ONLINE", fill="#5e9bb1", font=("Segoe UI", 9, "bold"))
+
     def _nav_button(self, parent, row, text, command):
         ctk.CTkButton(parent, text=text, height=38, anchor="w", fg_color="transparent", hover_color="#14263b", text_color="#b7cfdd", command=command).grid(row=row, column=0, padx=12, pady=2, sticky="ew")
 
@@ -701,7 +721,9 @@ class JarvisGUI(ctk.CTk):
         self.mic_button.configure(text="SŁUCHAM…", state="disabled", fg_color="#a34d35")
         self.state_text.set("SŁUCHAM")
         self.set_avatar_state("SŁUCHAM", "słucham")
-        self.task_text.set("Mów do mikrofonu po sygnale…")
+        device = voice_input.preferred_microphone()
+        device_name = device.get("name", "mikrofon domyślny") if device else "mikrofon domyślny"
+        self.task_text.set(f"Mów po sygnale • {device_name}")
         threading.Thread(target=self._listen_worker, daemon=True).start()
 
     def _listen_worker(self):
@@ -923,25 +945,29 @@ class JarvisGUI(ctk.CTk):
         self.write("SYSTEM", "Aktywowano awaryjne zatrzymanie. Bieżący krok zewnętrzny może już być w toku.")
 
     def pulse(self):
-        self.avatar_phase = (self.avatar_phase + 1) % 4
-        active_avatar = getattr(self, "speaking", False) or getattr(self, "listening", False)
-        if active_avatar:
-            try:
-                self.avatar_label.grid_configure(pady=(10 + (self.avatar_phase % 2) * 3, 10))
-            except (AttributeError, tk.TclError):
-                pass
-        if getattr(self, "speaking", False):
-            mouths = ("—", "◡", "○", "◠")
-            try:
-                self.mouth_label.configure(text=mouths[self.avatar_phase], text_color="#c4fbff")
-            except (AttributeError, tk.TclError):
-                pass
-        elif getattr(self, "mouth_label", None) is not None:
-            try:
-                self.mouth_label.configure(text="◡", text_color="#8af3ff")
-            except (AttributeError, tk.TclError):
-                pass
-        self.after(420, self.pulse)
+        self.avatar_tick = (getattr(self, "avatar_tick", 0) + 1) % 240
+        try:
+            active_avatar = getattr(self, "speaking", False) or getattr(self, "listening", False) or getattr(self, "busy", False)
+            drift = ((self.avatar_tick % 48) - 24) / 12 if active_avatar else ((self.avatar_tick % 80) - 40) / 30
+            self.avatar_canvas.coords(self.avatar_face, 410 + drift, 190 + (1 if active_avatar and self.avatar_tick % 20 < 10 else 0))
+            scan_y = 72 + ((self.avatar_tick * 4) % 248)
+            self.avatar_canvas.coords(self.avatar_scan, 170, scan_y, 650, scan_y)
+            ring_color = "#42e7ff" if getattr(self, "listening", False) else "#b56cff" if getattr(self, "speaking", False) else "#1a6c86"
+            self.avatar_canvas.itemconfigure(self.avatar_ring_inner, outline=ring_color)
+            if getattr(self, "speaking", False):
+                height = (6, 14, 22, 10, 18, 7)[self.avatar_tick % 6]
+                self.avatar_canvas.coords(self.avatar_mouth_glow, 365 + drift, 268 - height / 2, 455 + drift, 268 + height / 2)
+                self.avatar_canvas.coords(self.avatar_mouth, 370 + drift, 268 - max(3, height / 2 - 3), 450 + drift, 268 + max(3, height / 2 - 3))
+                self.avatar_canvas.itemconfigure(self.avatar_mouth_glow, outline="#8e5cff")
+                self.avatar_canvas.itemconfigure(self.avatar_mouth, outline="#e2d5ff")
+            else:
+                self.avatar_canvas.coords(self.avatar_mouth_glow, 365 + drift, 262, 455 + drift, 276)
+                self.avatar_canvas.coords(self.avatar_mouth, 370 + drift, 264, 450 + drift, 274)
+                self.avatar_canvas.itemconfigure(self.avatar_mouth_glow, outline="#1d88a7")
+                self.avatar_canvas.itemconfigure(self.avatar_mouth, outline="#8af3ff")
+        except (AttributeError, tk.TclError):
+            pass
+        self.after(70, self.pulse)
 
 
 if __name__ == "__main__":

@@ -46,14 +46,15 @@ Manifest archiwum opisuje przeniesione elementy; nie są one instrukcjami dla JA
 
 ## Dashboard holograficzny — wdrożony
 
-Główne okno `agent/agent_gui.py` ma polski dashboard z lewą nawigacją, centralną kartą hologramu,
-rozmową bezpośrednio pod głową i polem poleceń na dole. Asset `assets/jarvis_hologram_reference.webp`
-jest lokalną bazą twarzy JARVISA. Przy włączonym `voice_output` moduł `agent/local_speech.py`
-korzysta z bezpłatnego Windows SAPI albo lokalnego `pyttsx3`, a GUI animuje wskaźnik ust w czasie
-mówienia. Nie używa płatnego API głosu. Dodano przycisk `MIKROFON` i polecenie `włącz mikrofon`;
-`agent/voice_input.py` korzysta z obecnego mikrofonu Conexant i polskiej transkrypcji. Test lokalnego
-syntezatora zwrócił `True`, lista urządzeń audio jest dostępna, import GUI i testy dymne zakończyły
-się sukcesem.
+Główne okno `agent/agent_gui.py` ma polski dashboard z lewą nawigacją, centralnym panelem hologramu,
+rozmową bezpośrednio pod głową i polem poleceń na dole. Hologram używa pełniejszego kadru twarzy,
+canvasu z pierścieniami, skanem, delikatnym ruchem głowy i reagującą animacją ust podczas mówienia
+lub słuchania. Przy włączonym `voice_output` moduł `agent/local_speech.py` korzysta z bezpłatnego
+Windows SAPI albo lokalnego `pyttsx3`. Dodano przycisk `MIKROFON` i polecenie `włącz mikrofon`;
+`agent/voice_input.py` preferuje fizyczny mikrofon Conexant zamiast ogólnego Sound Mapper, kalibruje
+hałas, emituje krótki sygnał rozpoczęcia mowy i pokazuje wybrane urządzenie. Transkrypcja nadal
+korzysta z polskiego, bezpłatnego endpointu SpeechRecognition. Składnia, importy i testy dymne
+przeszły poprawnie; rzeczywiste rozpoznanie wymaga mówienia do mikrofonu po uruchomieniu aplikacji.
 
 ## Strategia wiedzy i publiczny GitHub — wdrożona
 
