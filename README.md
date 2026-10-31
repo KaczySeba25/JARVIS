@@ -34,7 +34,7 @@ The desktop menu includes local personalization, a durable task center, a review
 
 For a product task, Jarvis can combine `market_research`, `offer_analysis` and `campaign_pack`: research sources, compare complete cost data and margins, then prepare a product listing plus Instagram, Facebook and TikTok drafts. These skills do not publish or buy anything; an approved, tested connector is required for each external action.
 
-The skill list includes both working tools and early-stage helpers. A skill's presence in the folder does not by itself mean the whole capability is finished. Start new work with [the current project status](PROJECT_STATUS_CURRENT.md), then see [the agreed Jarvis vision](JARVIS_VISION.md) and [the roadmap](ROADMAP.md). Historical source documents are kept in `reference/historical_user_documents/` and are not standing instructions.
+The skill list includes both working tools and early-stage helpers. A skill's presence in the folder does not by itself mean the whole capability is finished. Start new work with [the current project status](PROJECT_STATUS_CURRENT.md), then see [the agreed Jarvis vision](JARVIS_VISION.md). Historical source documents are kept outside the active project archive and are not standing instructions.
 
 See [implementation status and current limits](IMPLEMENTED_FEATURES.md) before treating any workflow as production-ready.
 

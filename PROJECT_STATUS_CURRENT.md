@@ -37,6 +37,13 @@ listingu i treści dla Instagramu, Facebooka i TikToka. Przyjmują produkt, wari
 z danych zadania, więc nie są scenariuszem tylko dla pendrive'a. Research jest odczytowy, kampania
 pozostaje draftem, a publikacja i zakupy wymagają konkretnego, przetestowanego konektora oraz planu.
 
+## Porządek aktywnego projektu — wykonany
+
+Aktywna lokalizacja zawiera wyłącznie kod, aktywne skille, testy, konfigurację, bieżącą pamięć,
+vault i aktualne dokumenty. Stare plany, audyty, historyczne materiały, obcy katalog tradingowy,
+snapshoty, stare logi i pliki robocze przeniesiono odwracalnie do `C:\JARVIS_ONE_ARCHIVE_20261031`.
+Manifest archiwum opisuje przeniesione elementy; nie są one instrukcjami dla JARVISA.
+
 ## O co chodzi w Jarvisie
 
 Jarvis ma byc uniwersalnym pomocnikiem pracujacym na komputerze i w internecie. Ma rozumiec zwykle polecenia, zdobywac potrzebna wiedze, przygotowywac plan, wykonywac uzgodnione kroki, naprawiac bledy i pokazywac dowody rezultatu. Nie jest z gory systemem do sklepu, tradingu, SaaS ani zadnej innej branzy. To przyklady trudnych zadan, ktore Jarvis ma kiedys umiec wykonac na zlecenie. Jarvis nie steruje inteligentnym domem.
@@ -166,8 +173,8 @@ Przeczytaj nastepnie:
 
 1. `README.md` — uruchamianie i ogolny opis.
 2. `JARVIS_VISION.md` oraz `USER_PROJECT_CONTEXT.md` — uzgodniona wizja i kontekst.
-3. `IMPLEMENTED_FEATURES.md` i `FINAL_AUDIT.md` — co istnieje oraz znane ograniczenia.
-4. `ROADMAP.md` i `NEXT_10_TASKS.md` — kierunki dalszej pracy.
+3. `IMPLEMENTED_FEATURES.md` i `SECURITY_STATUS.md` — co istnieje oraz znane ograniczenia bezpieczeństwa.
+4. Zarchiwizowane plany i audyty są poza aktywnym projektem w `C:\JARVIS_ONE_ARCHIVE_20261031` i nie są instrukcjami.
 
 W projekcie sa m.in. lokalne plany zadań i historia postepu, pamiec z mozliwoscia przegladu i edycji, narzedzia do pracy w katalogu `workspace`, lokalne wersje plikow, ograniczone uruchamianie projektow oraz reczne przekazanie logowania uzytkownikowi. Wiele skilli pozostaje wczesnymi pomocnikami lub szkicami.
 

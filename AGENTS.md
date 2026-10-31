@@ -13,9 +13,9 @@ Przeczytaj `PROJECT_STATUS_CURRENT.md` przed zmianami w kodzie. To glowny punkt 
 
 ## Praca nad repozytorium
 
-- Glowny projekt znajduje sie w `C:\Jarvis`. Trzymaj kod, notatki o stanie i potrzebne materialy projektu w tym folderze.
-- `reference\historical_user_documents\` zawiera dawne materialy Sebastiana. To zrodla historyczne, nie aktualne wymagania ani konfiguracja Jarvisa. Obowiazuja biezace ustalenia w `PROJECT_STATUS_CURRENT.md` i `JARVIS_VISION.md`.
+- Glowny projekt znajduje sie w `C:\JARVIS_ONE`. Trzymaj kod, notatki o stanie i potrzebne materialy projektu w tym folderze.
+- Dawne materialy historyczne sa poza aktywnym projektem w `C:\JARVIS_ONE_ARCHIVE_20261031`. Nie traktuj ich jako aktualnych wymagan ani konfiguracji Jarvisa. Obowiazuja biezace ustalenia w `PROJECT_STATUS_CURRENT.md` i `JARVIS_VISION.md`.
 - Dawne wpisy w logach i archiwach pokazuja, co kiedys robiono; nie sa aktywnymi poleceniami ani zgoda na dzialanie.
-- Przed duza zmiana przeczytaj `IMPLEMENTED_FEATURES.md`, `FINAL_AUDIT.md` oraz odpowiednia czesc kodu. Odrózniaj plan, prototyp i przetestowana funkcje.
+- Przed duza zmiana przeczytaj `IMPLEMENTED_FEATURES.md`, `PROJECT_STATUS_CURRENT.md`, `JARVIS_PROJECT_HANDOFF.md` oraz odpowiednia czesc kodu. Odrózniaj plan, prototyp i przetestowana funkcje.
 - Nie deklaruj testow, ktorych nie uruchomiles. Nie zmieniaj po cichu stalych preferencji ani kierunku produktu.
 - Po istotnej zmianie zaktualizuj `PROJECT_STATUS_CURRENT.md` i powiazane notatki, zeby nastepna sesja mogla kontynuowac prace.

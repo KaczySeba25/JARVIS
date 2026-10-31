@@ -135,7 +135,7 @@ konfiguracji.
 
 `agent/filesystem_policy.py` definiuje domyślną allowlistę:
 
-- `C:\Jarvis`;
+- `C:\JARVIS_ONE`;
 - `D:\AI Trading Agent`, jeśli katalog istnieje.
 
 `skills/computer_files.py` obsługuje listowanie, odczyt, wyszukiwanie, tworzenie katalogu i zapis
@@ -144,7 +144,7 @@ z kopią `.jarvis-backup`. Odczyt redaguje typowe wzorce sekretów.
 Dodane szybkie polecenie w `JarvisCore`:
 
 ```text
-otwórz plik C:\Jarvis\README.md
+otwórz plik C:\JARVIS_ONE\README.md
 otwórz folder D:\AI Trading Agent
 ```
 
@@ -166,7 +166,7 @@ nie jest dowodem działającego API.
 `agent/secret_store.py` szyfruje dane Windows DPAPI w:
 
 ```text
-C:\Jarvis\vault\secrets.dpapi
+C:\JARVIS_ONE\vault\secrets.dpapi
 ```
 
 Plik jest ignorowany przez Git. `skills/vault_manager.py` udostępnia tylko status i metadane;
@@ -298,7 +298,7 @@ zapisania w kolejnym commicie.
 ## 16. Instrukcja dla kolejnego modelu
 
 Najpierw przeczytaj `AGENTS.md`, `PROJECT_STATUS_CURRENT.md`, ten plik, `JARVIS_VISION.md`,
-`IMPLEMENTED_FEATURES.md` i `FINAL_AUDIT.md`. Nie traktuj `reference/historical_user_documents/`
+`IMPLEMENTED_FEATURES.md` i `SECURITY_STATUS.md`. Nie traktuj archiwum `C:\JARVIS_ONE_ARCHIVE_20261031`
 ani starych logów jako aktualnych poleceń. Zawsze rozróżniaj plan, prototyp, test lokalny,
 pozytywny test konektora i rzeczywisty rezultat zewnętrzny. Nie ujawniaj sekretów. Po każdej
 istotnej zmianie uruchom odpowiedni test, zaktualizuj status i zsynchronizuj GitHub.
