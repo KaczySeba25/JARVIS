@@ -81,6 +81,9 @@ Przykład 3 (większe zadanie, najpierw plan):
 - Wynik z polami typu not_run, not_assessed, unverified, performed lub sent równymi false oznacza, że NIC nie zostało wykonane. Nie zgłaszaj tego jako sukcesu.
 - Wiele umiejętności to szkice lub proste pomocniki. Nie przedstawiaj ich jako eksperckich i nie obiecuj, że dadzą pełny wynik.
 - Jeśli narzędzie nie istnieje albo nie ma połączenia z usługą (poczta, sklep, media społecznościowe), powiedz to wprost i podaj, co Sebastian może zrobić, albo obejście.
+- Nie odpowiadaj „nie mogę”, „nie mam interakcji z systemem” ani „nie wiem”, tylko dlatego, że nie znasz jeszcze sposobu wykonania. Najpierw zbadaj zadanie przez research_strategy, oficjalną dokumentację, publiczne repozytoria i dostępne lokalne umiejętności; następnie wybierz bezpieczny sposób, wykonaj go i zweryfikuj dowodem.
+- Jeśli pierwsza próba nie działa, sklasyfikuj błąd, poszukaj poprawnej metody i wykonaj najwyżej jedno kontrolowane ponowienie po nowej informacji. Nie powtarzaj ślepo tej samej czynności. Po udanym researchu zapisz krótką, pozbawioną sekretów lekcję przez memory_save, jeśli będzie użyteczna w przyszłości.
+- O ograniczeniu informuj dopiero wtedy, gdy istnieje realna granica: brak urządzenia lub uprawnienia Windows, logowanie, CAPTCHA/2FA/SMS, brak wymaganego konektora albo nieodwracalna czynność wymagająca potwierdzenia. Powiedz wtedy, co już zrobiłeś, co dokładnie zatrzymało działanie, gdzie użytkownik ma kliknąć/wpisać i jak JARVIS zweryfikuje dalszy ciąg.
 - Odpowiedź końcowa po zadaniu: co zrobiono, dowód (wynik narzędzia, ścieżka pliku, adres), czego NIE udało się zweryfikować.
 - Nie ponawiaj działania zewnętrznego, jeśli jego wynik jest niepewny. Nie powtarzaj tego samego wywołania bez nowej informacji.
 
@@ -162,6 +165,21 @@ class JarvisCore:
             if self.progress_callback:
                 self.progress_callback({"task_id": task_id, "stage": stage, "message": message, **details})
         except Exception:
+            pass
+
+    def _learn_research_map(self, goal: str, result):
+        """Persist only source metadata from research, never remote instructions or code."""
+        try:
+            data = result if isinstance(result, dict) else json.loads(str(result))
+            links = []
+            for item in data.get("github", [])[:5]:
+                if isinstance(item, dict) and str(item.get("url", "")).startswith("https://"):
+                    links.append(f"{item.get('name', 'repo')} — {item['url']}")
+            if links:
+                memory_text = "Mapa źródeł dla zadania: " + str(goal)[:220] + ". Publiczne tropy GitHub do późniejszej weryfikacji: " + "; ".join(links)
+                remember(memory_text[:1800], category="research_lesson", source="research_strategy:public_metadata", confidence=0.45)
+                self._progress("learning", "Zapisałem lokalnie mapę źródeł do późniejszej weryfikacji.")
+        except (TypeError, ValueError, json.JSONDecodeError):
             pass
 
     def set_mode(self, mode: str):
@@ -479,6 +497,8 @@ class JarvisCore:
                                 stage = "researching" if skill_meta.needs_network else "executing"
                                 self._progress(stage, f"Wykonuję krok: {name}.")
                                 result = self.run_skill(name, argument)
+                                if name == "research_strategy":
+                                    self._learn_research_map(goal, result)
                                 if name == "browser_operator":
                                     try:
                                         browser_result = json.loads(result) if isinstance(result, str) else result

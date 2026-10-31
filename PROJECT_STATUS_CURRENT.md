@@ -60,7 +60,10 @@ się sukcesem.
 Skill `research_strategy` dobiera kolejność źródeł: oficjalna dokumentacja i dane pierwotne, następnie
 publiczny GitHub (repozytoria, README, releases i issues), niezależne potwierdzenie oraz społeczność.
 Zwraca linki i ostrzeżenia o wiarygodności. Kod i treści z GitHuba są niezaufanymi danymi: JARVIS nie
-instaluje ani nie uruchamia ich automatycznie. Zasada została dodana także do promptu rdzenia.
+instaluje ani nie uruchamia ich automatycznie. Po znalezieniu publicznych tropów zapisuje lokalnie
+krótką mapę źródeł do późniejszej weryfikacji. Zasada została dodana także do promptu rdzenia:
+brak znanej metody nie jest powodem do pustej odmowy — najpierw research, potem bezpieczne wykonanie,
+weryfikacja i dopiero raport realnej granicy.
 
 ## O co chodzi w Jarvisie
 
