@@ -10,11 +10,13 @@ from PIL import Image, ImageOps, ImageTk
 
 from jarvis_core import JarvisCore
 import task_runtime
+import mission_runtime
 import user_settings
 import local_provider
 import ollama_manager
 import local_speech
 import voice_input
+from background_worker import BackgroundWorker
 import skill_lifecycle
 from skill_registry import discover
 from research_engine import search as research_search
@@ -496,6 +498,12 @@ class TaskCenterWindow(ctk.CTkToplevel):
 
     def refresh(self):
         self.listbox.delete(0, "end")
+        missions = mission_runtime.list_missions(limit=50)
+        for mission in missions:
+            steps = mission_runtime.get(mission["id"])
+            total = len(steps.get("steps", [])) if steps else 0
+            done = sum(1 for step in (steps or {}).get("steps", []) if step["status"] in {"done", "skipped"})
+            self.listbox.insert("end", f"MISJA {mission['status'].upper():14} | {mission['id'][:10]} | {done}/{total} | {mission['goal'][:100]}")
         events = task_runtime.recent(100)
         latest = {}
         for event in events:
@@ -509,7 +517,7 @@ class TaskCenterWindow(ctk.CTkToplevel):
             flags.append("oczekuje plan do akceptacji")
         if waiting:
             flags.append("oczekuje na krok użytkownika")
-        self.info.configure(text=f"Pokazano {len(latest)} ostatnich zadań. " + ("; ".join(flags) + "." if flags else "Brak oczekujących blokad."))
+        self.info.configure(text=f"Misje: {len(missions)} • Zadania historyczne: {len(latest)}. " + ("; ".join(flags) + "." if flags else "Brak oczekujących blokad."))
 
 
 class ConnectorWindow(ctk.CTkToplevel):
@@ -582,11 +590,26 @@ class JarvisGUI(ctk.CTk):
         self.footer_text = tk.StringVar(value="")
         self.settings_window = None
         self.jarvis = JarvisCore(confirm=self.confirm_action, progress_callback=self.on_progress)
+        self.background_worker = BackgroundWorker(self._run_background_goal, progress=self._background_progress)
         self.build()
         self.apply_personalization()
         self.refresh_status()
         self._restore_task_timeline()
+        self.background_worker.start()
+        self.protocol("WM_DELETE_WINDOW", self.close_app)
         self.after(120, self.pulse)
+
+    def _run_background_goal(self, goal):
+        return self.jarvis.ask(goal)
+
+    def _background_progress(self, item):
+        self.after(0, lambda: self.on_progress({"task_id": "background", **item}))
+
+    def close_app(self):
+        try:
+            self.background_worker.stop()
+        finally:
+            self.destroy()
 
     def confirm_action(self, prompt):
         """Show any unavoidable safety confirmation on Tk's UI thread."""

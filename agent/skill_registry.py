@@ -17,8 +17,8 @@ class SkillMeta:
     source_count: int = 0
 
 def discover(directory: Path) -> list[SkillMeta]:
-    high_risk = {"system_cmd", "code_tester", "vault_manager", "universal_login", "browser_operator", "api_onboarding", "computer_files", "skill_lifecycle", "skill_builder", "workspace_runner", "workspace_history"}
-    medium_risk = {"code_writer", "self_improvement", "memory_save", "memory_forget", "memory_manage", "file_manager", "task_manager", "task_center", "connector_manager", "project_memory", "project_learning", "operator_mode", "safety_check", "notification_router", "workflow_scheduler"}
+    high_risk = {"system_cmd", "code_tester", "vault_manager", "universal_login", "browser_operator", "computer_operator", "api_onboarding", "computer_files", "skill_lifecycle", "skill_builder", "workspace_runner", "workspace_history"}
+    medium_risk = {"code_writer", "self_improvement", "skill_acquisition", "memory_save", "memory_forget", "memory_manage", "file_manager", "task_manager", "task_center", "mission_manager", "background_tasks", "connector_manager", "project_memory", "project_learning", "operator_mode", "safety_check", "notification_router", "workflow_scheduler"}
     network = {"web_research", "deep_research", "research_strategy", "market_data", "security_audit", "universal_login", "browser_operator", "api_onboarding"}
     result = []
     for path in sorted(directory.glob("*.py")):

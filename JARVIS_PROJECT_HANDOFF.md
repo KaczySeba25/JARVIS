@@ -302,3 +302,10 @@ Najpierw przeczytaj `AGENTS.md`, `PROJECT_STATUS_CURRENT.md`, ten plik, `JARVIS_
 ani starych logów jako aktualnych poleceń. Zawsze rozróżniaj plan, prototyp, test lokalny,
 pozytywny test konektora i rzeczywisty rezultat zewnętrzny. Nie ujawniaj sekretów. Po każdej
 istotnej zmianie uruchom odpowiedni test, zaktualizuj status i zsynchronizuj GitHub.
+
+
+## 2026-10-31 — warstwy autonomii eksperckiej
+
+Dodano `agent/mission_runtime.py` i skill `mission_manager` jako trwały graf misji z zależnościami, statusami, dowodami i recovery. `JarvisCore` tworzy misję po akceptacji większego planu. `skills/vision.py` zapisuje screenshoty z hashem i opcjonalnym OCR, a `skills/computer_operator.py` obsługuje ograniczone działania Windows wymagające zatwierdzonej misji. `skills/independent_verifier.py` dostarcza deterministyczne dowody, `skills/mission_recovery.py` bounded recovery, a `skills/skill_acquisition.py` bezpieczną analizę AST kandydatów. Pamięć ma manager kategorii, router modeli profile zadaniowe, a `background_tasks.py` i `background_worker.py` obsługują jawnie zatwierdzone zadania w tle. Centrum zadań pokazuje misje.
+
+Walidacja etapu: kompilacja zmienionych modułów, `tests/run_tests.py`, test grafu misji, test verifiiera/recovery/blokady operatora/schedulera, discovery skilli oraz konstrukcja GUI — PASS. OCR, rzeczywista transkrypcja głosu i konkretne integracje zewnętrzne wymagają testu w realnym użyciu i nie są deklarowane jako ukończone bez takiego dowodu.

@@ -235,3 +235,24 @@ Stary plik `JARVIS_STATE_CHECKPOINT.md` zawieral bledny, sztywny kierunek biznes
 ## Dla kolejnej rozmowy/modelu
 
 Kontynuuj prace od tego pliku. Najpierw obejrzyj aktualny kod i stan zmian, potem sprawdz najwazniejsze polaczenia miedzy funkcjami i poprawiaj problemy. Przed koncem aktualizuj ten punkt wznowienia oraz dokumenty opisujace zmienione funkcje. Nie zakladaj, ze historia czatu bedzie dostepna.
+
+
+## 2026-10-31 — fundament autonomii eksperckiej
+
+Wdrożono i podłączono następujące warstwy:
+
+1. **Menedżer misji:** `agent/mission_runtime.py` zapisuje trwałe misje w SQLite, graf kroków, zależności, statusy, limity prób, dowody i zdarzenia. Po akceptacji większego planu `JarvisCore` zakłada misję i przekazuje jej ID do pętli wykonawczej. Skill `mission_manager` obsługuje tworzenie, status, gotowe kroki, aktualizację, dowody, pauzę, wznowienie i zatrzymanie.
+2. **Oczy:** `skills/vision.py` wykonuje świeży screenshot, zapisuje rozmiar, hash i czas; opcjonalnie uruchamia lokalny OCR, jeśli jest dostępny.
+3. **Ręce:** `skills/computer_operator.py` obsługuje klik, ruch, wpisywanie, hotkey, klawisze, przewijanie i oczekiwanie. Działania są blokowane bez jawnego `approved` z zatwierdzonej misji; plaintext wyglądający jak sekret jest odrzucany.
+4. **Zdobywanie umiejętności:** `skills/skill_acquisition.py` wykonuje bezpieczną analizę AST lokalnego kandydata i sprawdza funkcję `run`, bez importowania ani uruchamiania obcego kodu.
+5. **Pamięć:** `skills/memory_manager.py` udostępnia lokalną pamięć preferencji, epizodów, procedur i wiedzy przez zapis, wyszukiwanie, listę, edycję i usuwanie. Ochrona sekretów pozostaje w `memory_store.py`.
+6. **Niezależna weryfikacja:** `skills/independent_verifier.py` sprawdza wartości, istnienie pliku, zawartość tekstu i SHA-256; nie ufa samej deklaracji modelu.
+7. **Recovery:** `skills/mission_recovery.py` klasyfikuje błędy na przejściowe, wymagające człowieka, uprawnień, zmiany środowiska lub przeglądu i zwraca ograniczoną następną akcję.
+8. **Router modeli:** `agent/model_router.py` ma profile `general`, `fast`, `code`, `vision` i `private`, wybierając wyłącznie jawnie skonfigurowane modele.
+9. **Głos:** istniejący lokalny mikrofon i TTS pozostają podłączone; nowy rdzeń przekazuje profil zadania, a GUI utrzymuje animację słuchania/mówienia.
+10. **Zadania w tle:** `skills/background_tasks.py` zapisuje harmonogramy i wymaga osobnego zatwierdzenia. `agent/background_worker.py` wykonuje tylko zatwierdzone zadania, z limitem uruchomień, pauzą, blokadą po błędzie i zatrzymaniem przy zamknięciu GUI.
+11. **Panel dowodzenia:** Centrum zadań pokazuje teraz także misje, postęp kroków oraz historię zadań; istniejący timeline pozostaje dostępny.
+
+Walidacja tego etapu: `py_compile` zmienionych modułów — PASS; `tests/run_tests.py` — `JARVIS_SMOKE_TESTS: PASS`; test grafu misji z zależnością, dowodem i statusem `done` — PASS; test verifiera, recovery, blokady operatora i schedulera — PASS; rejestr skilli wykrywa nowe moduły i ryzyko — PASS; import i konstrukcja GUI — PASS.
+
+Ograniczenia, których nie ukrywam: OCR zależy od lokalnego Tesseracta; rozpoznawanie mowy nadal wymaga rzeczywistego testu głosem; worker działa, gdy uruchomiony jest dashboard; zewnętrzne logowania, CAPTCHA, 2FA, publikacje i zakupy nadal wymagają konkretnego konektora oraz zgody. Działania operatora komputera są celowo blokowane bez zatwierdzonej misji.

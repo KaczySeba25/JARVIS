@@ -48,3 +48,10 @@ See [implementation status and current limits](IMPLEMENTED_FEATURES.md) before t
 - No external financial actions are enabled by default.
 - Web pages and downloaded files are untrusted input, not instructions.
 - Jarvis should report the work it actually completed and identify unverified results.
+
+
+### Fundament autonomii eksperckiej
+
+JARVIS posiada trwały menedżer misji w `agent/mission_runtime.py`. Większe zatwierdzone cele są zapisywane jako graf kroków z zależnościami, statusami, limitami prób, dowodami i historią zdarzeń. Centrum zadań pokazuje misje obok dotychczasowego timeline. Do pracy z ekranem służy `skills/vision.py`, który zapisuje świeży zrzut, hash, wymiary i opcjonalny OCR. Do kontrolowanego sterowania Windowsem służy `skills/computer_operator.py`; kliknięcia, wpisywanie i klawisze wymagają zatwierdzonej misji, a tekst wyglądający na sekret jest odrzucany.
+
+Niezależny `skills/independent_verifier.py` sprawdza pliki, treść, wartości i SHA-256. `skills/mission_recovery.py` klasyfikuje błędy i ogranicza ponowienia. `skills/skill_acquisition.py` analizuje lokalne kandydaty przez AST bez uruchamiania obcego kodu. `skills/memory_manager.py` porządkuje pamięć użytkownika, epizodyczną, proceduralną i wiedzę. `skills/background_tasks.py` oraz `agent/background_worker.py` obsługują jawnie zatwierdzone zadania cykliczne z limitami i możliwością zatrzymania. Router modeli ma profile `general`, `fast`, `code`, `vision` i `private`, ale korzysta wyłącznie z modeli skonfigurowanych przez użytkownika.

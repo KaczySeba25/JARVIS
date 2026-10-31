@@ -146,9 +146,33 @@ class ModelRouter:
 
     def describe(self) -> dict:
         return {"provider": self.provider, "model": self.model, "warning": self.warning,
-                "installed_local": self.installed, "preferences": dict(self.prefs)}
+                "installed_local": self.installed, "profiles": ["general", "fast", "code", "vision", "private"],
+                "preferences": dict(self.prefs)}
+
+    def select_profile(self, profile: str):
+        """Select among already configured models; never discovers or creates a provider."""
+        profile = str(profile or "general").lower()
+        if profile in {"private", "local"}:
+            local = self._local_candidates()
+            if local:
+                self._activate(*local[0])
+                self._candidates = local[1:]
+                return {"selected": self.provider, "model": self.model, "profile": profile}
+        if self.provider.startswith("hosted") and profile == "general":
+            return {"selected": self.provider, "model": self.model, "profile": profile}
+        candidates = self._local_candidates()
+        if candidates:
+            names = [item[1].lower() for item in candidates]
+            needles = {"code": ("coder", "qwen"), "vision": ("vl", "vision", "llava"), "fast": ("1.5b", "2b", "3b", "4b")}.get(profile, ())
+            chosen = next((item for item in candidates if any(needle in item[1].lower() for needle in needles)), candidates[0])
+            self._activate(*chosen)
+            self._candidates = [item for item in candidates if item[1] != chosen[1]]
+            return {"selected": self.provider, "model": self.model, "profile": profile}
+        return {"selected": self.provider, "model": self.model, "profile": profile, "fallback": True}
 
     def complete(self, messages, **kwargs):
+        profile = kwargs.pop("profile", "general")
+        self.select_profile(profile)
         if not self.client:
             raise RuntimeError(self.warning or "Nie skonfigurowano modelu online ani nie znaleziono uruchomionego modelu lokalnego.")
         if self.provider.startswith("hosted:groq") and "reasoning_effort" not in kwargs and "gpt-oss" in self.model:

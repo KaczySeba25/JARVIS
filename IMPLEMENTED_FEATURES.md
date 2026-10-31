@@ -33,3 +33,20 @@ Opis dotyczy kodu w projekcie, nie obietnicy, że wszystkie przyszłe zadania s�
 - Historia postępu potwierdza wynik narzędzia, ale nie robi automatycznie zrzutów ekranu ani niezależnej weryfikacji każdej publikacji w zewnętrznej usłudze.
 - Pamięć używa lokalnego dopasowania słów, nie rozumie jeszcze niezawodnie relacji semantycznych między dowolnymi projektami.
 - W tej zmianie sprawdzono składnię plików Pythona. Nie uruchamiano zestawu testów ani prawdziwych integracji.
+
+
+## Fundament autonomii eksperckiej — 2026-10-31
+
+- `agent/mission_runtime.py` — trwały graf misji w SQLite: kroki, zależności, statusy, retry, dowody i zdarzenia.
+- `skills/mission_manager.py` — API tworzenia, wznawiania, pauzowania i zatrzymywania misji.
+- `skills/vision.py` — świeże screenshoty, metadane, hash i opcjonalny OCR.
+- `skills/computer_operator.py` — kontrolowane ręce Windows, blokowane bez zatwierdzonej misji.
+- `skills/independent_verifier.py` — deterministyczne dowody plików, tekstu, wartości i SHA-256.
+- `skills/mission_recovery.py` — bounded recovery po błędach.
+- `skills/skill_acquisition.py` — analiza AST kandydata bez uruchamiania obcego kodu.
+- `skills/memory_manager.py` — lokalne kategorie pamięci użytkownika, epizodów, procedur i wiedzy.
+- `skills/background_tasks.py` + `agent/background_worker.py` — zatwierdzane harmonogramy i worker z limitami.
+- `agent/model_router.py` — profile wyboru skonfigurowanego modelu: general, fast, code, vision, private.
+- `agent/agent_gui.py` — Centrum zadań pokazuje także trwałe misje i postęp kroków.
+
+Te funkcje są zaimplementowane i przetestowane deterministycznie. Nie oznacza to automatycznego dostępu do dowolnych usług zewnętrznych ani obejścia logowania, CAPTCHA, 2FA lub wymaganych zgód.
