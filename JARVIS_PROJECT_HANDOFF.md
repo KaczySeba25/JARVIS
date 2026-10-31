@@ -1,7 +1,7 @@
 # Jarvis — pełny opis projektu i punkt przekazania pracy
 
 **Stan dokumentu:** 24 października 2026 r.  
-**Lokalizacja projektu:** `C:\Jarvis`  
+**Lokalizacja projektu:** `C:\JARVIS_ONE`  
 **Repozytorium:** `https://github.com/KaczySeba25/JARVIS.git`  
 **Główna gałąź:** `main`  
 **Ostatni zsynchronizowany commit:** `5a106af` — naprawa responsywności i odświeżenie interfejsu.
@@ -32,7 +32,7 @@ Obowiązujące granice:
 Uruchom:
 
 ```powershell
-Set-Location C:\Jarvis
+Set-Location C:\JARVIS_ONE
 .\Start_Jarvis.bat
 ```
 
@@ -41,7 +41,7 @@ Skrypt wymaga `agent\venv\Scripts\python.exe` i uruchamia `agent\agent_gui.py`.
 ### Interfejs tekstowy
 
 ```powershell
-Set-Location C:\Jarvis
+Set-Location C:\JARVIS_ONE
 & .\agent\venv\Scripts\python.exe .\agent\agent.py
 ```
 
@@ -227,6 +227,7 @@ W `skills/` znajdują się zarówno działające fundamenty, jak i wczesne pomoc
   `plan_executor`, `workflow_orchestrator`, `workflow_scheduler`, `resume_manager`;
 - jakość i recovery: `quality_check`, `result_critic`, `result_verifier`, `regression_runner`,
   `recovery_coordinator`, `auto_recovery_handler`, `execution_report`.
+- research i handel zadaniowy: `market_research`, `offer_analysis`, `campaign_pack`.
 
 Przed uznaniem skilla za gotowy sprawdź, czy ma `run`, test, rzeczywistą implementację i dowód
 działania. Rejestr skilli automatycznie wykrywa pliki, więc sama obecność pliku może sprawić, że
@@ -264,10 +265,10 @@ ukończonych.
 
 ## 14. Stan Git i synchronizacja
 
-Źródło prawdy dla kodu to `main` w GitHub i lokalne `C:\Jarvis`. Po każdej zmianie wykonuj:
+Źródło prawdy dla kodu to `main` w GitHub i lokalne `C:\JARVIS_ONE`. Po każdej zmianie wykonuj:
 
 ```powershell
-Set-Location C:\Jarvis
+Set-Location C:\JARVIS_ONE
 git status --short --branch
 git add <zmienione-pliki>
 git commit -m "Krótki opis zmiany"

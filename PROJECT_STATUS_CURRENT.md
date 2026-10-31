@@ -1,7 +1,7 @@
 # Jarvis — punkt wznowienia pracy
 
 **Ostatnia aktualizacja:** 2026-10-24
-**Folder projektu:** `C:\Jarvis`  
+**Folder projektu:** `C:\JARVIS_ONE`  
 **Jezyk rozmowy z Sebastianem:** polski, prosty i bez niepotrzebnego zargonu.
 
 ## Tavily
@@ -28,6 +28,14 @@ głosu. Instalator umiejętności przyjmuje pojedynczy lokalny plik Python, twor
 walidację składni, statyczny przegląd oraz próbę importu przed aktywacją. API discovery korzysta
 z istniejącego researchu źródłowego; może przygotować wyłącznie metadane konektora, bez sekretu,
 logowania lub automatycznego włączenia dostępu.
+
+## Warstwa oczu, rąk i umysłu — wdrożona
+
+Skille `market_research`, `offer_analysis` i `campaign_pack` łączą research publicznych ofert
+dostawców i konkurencji, deterministyczne obliczenia kosztu całkowitego/zysku/marży oraz przygotowanie
+listingu i treści dla Instagramu, Facebooka i TikToka. Przyjmują produkt, warianty, koszty i kanały
+z danych zadania, więc nie są scenariuszem tylko dla pendrive'a. Research jest odczytowy, kampania
+pozostaje draftem, a publikacja i zakupy wymagają konkretnego, przetestowanego konektora oraz planu.
 
 ## O co chodzi w Jarvisie
 

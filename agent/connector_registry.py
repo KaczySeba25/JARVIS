@@ -14,6 +14,11 @@ CATALOG = [
     {"service": "outlook", "kind": "oauth", "scopes": ["Mail.Read", "Mail.Send"], "endpoint": "https://learn.microsoft.com/graph/auth-register-app-v2"},
     {"service": "slack", "kind": "oauth", "scopes": ["chat:write", "channels:read"], "endpoint": "https://api.slack.com/authentication/oauth-v2"},
     {"service": "shopify", "kind": "oauth", "scopes": ["read_products", "write_products"], "endpoint": "https://shopify.dev/docs/apps/build/authentication-authorization"},
+    {"service": "amazon-selling-partner", "kind": "oauth", "scopes": ["catalog", "product-pricing", "reports"], "endpoint": "https://developer-docs.amazon.com/sp-api/"},
+    {"service": "ebay", "kind": "oauth", "scopes": ["sell.inventory", "sell.account", "commerce.catalog"], "endpoint": "https://developer.ebay.com/api-docs/static/oauth-tokens.html"},
+    {"service": "instagram", "kind": "oauth", "scopes": ["instagram_basic", "instagram_content_publish"], "endpoint": "https://developers.facebook.com/docs/instagram-api/"},
+    {"service": "facebook-pages", "kind": "oauth", "scopes": ["pages_read_engagement", "pages_manage_posts"], "endpoint": "https://developers.facebook.com/docs/pages-api/"},
+    {"service": "tiktok-content-posting", "kind": "oauth", "scopes": ["video.publish", "video.upload"], "endpoint": "https://developers.tiktok.com/doc/content-posting-api-get-started/"},
     {"service": "binance-testnet", "kind": "api", "scopes": ["market-data", "testnet-only"], "endpoint": "https://testnet.binance.vision/"},
 ]
 def _read():

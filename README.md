@@ -22,6 +22,7 @@ Copy `agent/.env.example` to `agent/.env` for the optional settings. Keep real k
 - A workspace-only project writer, bounded no-shell project checks, and a visible demo runner.
 - A manual sign-in handoff that never asks for the user's password in chat.
 - A local Ollama model manager in the desktop settings: list installed models, pull a model with streamed progress, select it, and remove it locally.
+- Goal-driven commerce primitives: public supplier/competitor research, deterministic offer-margin analysis, and reviewable listing/social campaign drafts.
 
 ### Local model management
 
@@ -30,6 +31,8 @@ Open **Menu → Ustawienia modelu → Zarządzaj modelami Ollama**. Jarvis can u
 ### Desktop menu
 
 The desktop menu includes local personalization, a durable task center, a reviewed skill/plugin installer, public API discovery and explicit connector metadata. Personalization covers language, display theme, accent, font scale, compact layout, notifications and voice preferences. API discovery is read-only research; preparing a connector stores only metadata and never enables an unknown service or stores credentials automatically.
+
+For a product task, Jarvis can combine `market_research`, `offer_analysis` and `campaign_pack`: research sources, compare complete cost data and margins, then prepare a product listing plus Instagram, Facebook and TikTok drafts. These skills do not publish or buy anything; an approved, tested connector is required for each external action.
 
 The skill list includes both working tools and early-stage helpers. A skill's presence in the folder does not by itself mean the whole capability is finished. Start new work with [the current project status](PROJECT_STATUS_CURRENT.md), then see [the agreed Jarvis vision](JARVIS_VISION.md) and [the roadmap](ROADMAP.md). Historical source documents are kept in `reference/historical_user_documents/` and are not standing instructions.
 
