@@ -13,6 +13,7 @@ import task_runtime
 import user_settings
 import local_provider
 import ollama_manager
+import local_speech
 import skill_lifecycle
 from skill_registry import discover
 from research_engine import search as research_search
@@ -564,14 +565,16 @@ class ConnectorWindow(ctk.CTkToplevel):
 class JarvisGUI(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("Jarvis")
-        self.geometry("1380x860")
-        self.minsize(1050, 680)
-        self.configure(fg_color="#212121")
-        self.grid_columnconfigure(0, weight=0, minsize=245)
+        self.title("JARVIS — Cyfrowy asystent")
+        self.geometry("1480x940")
+        self.minsize(1120, 760)
+        self.configure(fg_color="#070b14")
+        self.grid_columnconfigure(0, weight=0, minsize=252)
         self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
         self.busy = False
+        self.speaking = False
+        self.avatar_phase = 0
         self.state_text = tk.StringVar(value="GOTOWY")
         self.task_text = tk.StringVar(value="Brak aktywnego zadania")
         self.footer_text = tk.StringVar(value="")
@@ -602,45 +605,88 @@ class JarvisGUI(ctk.CTk):
         return answer[0]
 
     def build(self):
-        bar = ctk.CTkFrame(self, fg_color="#0d1420", corner_radius=0)
-        bar.grid(row=0, column=0, columnspan=2, sticky="ew")
-        bar.grid_columnconfigure(1, weight=1)
-        ctk.CTkLabel(bar, text="Jarvis", font=ctk.CTkFont(size=22, weight="bold"), text_color="#f2f2f2").grid(row=0, column=0, padx=22, pady=15)
-        ctk.CTkLabel(bar, textvariable=self.state_text, font=ctk.CTkFont(size=12, weight="bold"), text_color="#a8a8a8").grid(row=0, column=1, sticky="w")
-        self.menu_button = ctk.CTkButton(bar, text="☰  Menu", width=110, fg_color="#3a3a3a", hover_color="#4a4a4a", command=self.open_menu)
-        self.menu_button.grid(row=0, column=2, padx=(0, 10))
-        ctk.CTkButton(bar, text="Zatrzymaj", width=110, fg_color="#7f3030", hover_color="#9b3b3b", command=self.stop).grid(row=0, column=3, padx=(0, 18))
         self.build_menu()
+        sidebar = ctk.CTkFrame(self, fg_color="#0b1220", corner_radius=0)
+        sidebar.grid(row=0, column=0, sticky="nsew")
+        sidebar.grid_rowconfigure(8, weight=1)
+        ctk.CTkLabel(sidebar, text="JARVIS", text_color="#e9fbff", font=ctk.CTkFont(size=25, weight="bold")).grid(row=0, column=0, padx=24, pady=(28, 0), sticky="w")
+        ctk.CTkLabel(sidebar, text="LOKALNY KOKPIT AI", text_color="#4edcf8", font=ctk.CTkFont(size=10, weight="bold")).grid(row=1, column=0, padx=25, pady=(0, 24), sticky="w")
+        ctk.CTkButton(sidebar, text="＋  Nowa rozmowa", height=44, fg_color="#176bdb", hover_color="#2588ff", command=self.clear_chat).grid(row=2, column=0, padx=16, pady=(0, 20), sticky="ew")
+        ctk.CTkLabel(sidebar, text="NAWIGACJA", text_color="#5d7892", font=ctk.CTkFont(size=10, weight="bold"), anchor="w").grid(row=3, column=0, padx=22, pady=(0, 8), sticky="ew")
+        self._nav_button(sidebar, 4, "⌂  Rozmowa", self.focus_chat)
+        self._nav_button(sidebar, 5, "◈  Centrum zadań", self.open_task_center)
+        self._nav_button(sidebar, 6, "◉  Konektory", self.open_connectors)
+        self._nav_button(sidebar, 7, "✦  Umiejętności", self.open_skills)
+        self._nav_button(sidebar, 8, "⌁  Research API", self.open_api_discovery)
+        self._nav_button(sidebar, 9, "⚙  Ustawienia", self.open_settings)
+        account = ctk.CTkFrame(sidebar, fg_color="#111d30", corner_radius=12)
+        account.grid(row=10, column=0, padx=16, pady=(16, 22), sticky="ew")
+        ctk.CTkLabel(account, text="●  SYSTEM DZIAŁA", text_color="#55e6b0", font=ctk.CTkFont(size=10, weight="bold")).pack(anchor="w", padx=14, pady=(12, 2))
+        ctk.CTkLabel(account, text="Tryb: lokalny / nadzorowany", text_color="#8da4b7", font=ctk.CTkFont(size=11)).pack(anchor="w", padx=14, pady=(0, 12))
+        self.menu_button = ctk.CTkButton(sidebar, text="☰  Więcej opcji", height=36, fg_color="transparent", border_width=1, border_color="#263d56", hover_color="#14263b", command=self.open_menu)
+        self.menu_button.grid(row=11, column=0, padx=16, pady=(0, 18), sticky="ew")
 
-        face = ctk.CTkFrame(self, fg_color="#171717", corner_radius=0)
-        face.grid(row=1, column=0, padx=(16, 8), pady=16, sticky="nsew")
-        face.grid_rowconfigure(0, weight=1)
-        face.grid_columnconfigure(0, weight=1)
-        ctk.CTkButton(face, text="＋  Nowa rozmowa", height=42, fg_color="#3b82f6", hover_color="#2563eb", command=self.clear_chat).grid(row=0, column=0, padx=16, pady=(20, 24), sticky="ew")
-        ctk.CTkLabel(face, text="JARVIS", text_color="#f2f2f2", font=ctk.CTkFont(size=13, weight="bold"), anchor="w").grid(row=1, column=0, padx=18, pady=(0, 8), sticky="ew")
-        ctk.CTkLabel(face, text="Twój lokalny asystent", text_color="#a3a3a3", anchor="w").grid(row=2, column=0, padx=18, sticky="ew")
-        ctk.CTkLabel(face, text="\nNarzędzia\n• pliki i projekty\n• przeglądarka\n• konektory\n• pamięć i zadania", justify="left", anchor="nw", text_color="#b5b5b5").grid(row=3, column=0, padx=18, pady=22, sticky="new")
-        ctk.CTkLabel(face, textvariable=self.task_text, wraplength=205, justify="left", anchor="sw", text_color="#8f8f8f").grid(row=4, column=0, padx=18, pady=18, sticky="sew")
+        main = ctk.CTkFrame(self, fg_color="#070b14", corner_radius=0)
+        main.grid(row=0, column=1, sticky="nsew")
+        main.grid_columnconfigure(0, weight=1)
+        main.grid_rowconfigure(1, weight=3)
+        main.grid_rowconfigure(2, weight=2)
+        top = ctk.CTkFrame(main, fg_color="transparent", height=68)
+        top.grid(row=0, column=0, padx=30, pady=(18, 0), sticky="ew")
+        top.grid_columnconfigure(0, weight=1)
+        ctk.CTkLabel(top, text="Panel główny", text_color="#eef9ff", font=ctk.CTkFont(size=24, weight="bold"), anchor="w").grid(row=0, column=0, sticky="w")
+        ctk.CTkLabel(top, text="Twój cyfrowy partner do pracy, researchu i wykonywania zadań", text_color="#7994a9", anchor="w").grid(row=1, column=0, sticky="w")
+        self.status_chip = ctk.CTkLabel(top, textvariable=self.state_text, text_color="#65e8ff", fg_color="#102b3d", corner_radius=14, padx=14, pady=7, font=ctk.CTkFont(size=11, weight="bold"))
+        self.status_chip.grid(row=0, column=1, rowspan=2, padx=(12, 0), sticky="e")
 
-        panel = ctk.CTkFrame(self, fg_color="#212121", corner_radius=0)
-        panel.grid(row=1, column=1, padx=(8, 16), pady=16, sticky="nsew")
-        panel.grid_columnconfigure(0, weight=1)
-        panel.grid_rowconfigure(0, weight=3)
-        panel.grid_rowconfigure(1, weight=1)
-        self.chat = ctk.CTkTextbox(panel, state="disabled", font=ctk.CTkFont(size=14), fg_color="#212121", border_width=0, wrap="word")
-        self.chat.grid(row=0, column=0, padx=14, pady=(14, 8), sticky="nsew")
-        self.progress_view = ctk.CTkTextbox(panel, state="disabled", height=130, font=ctk.CTkFont(size=12), text_color="#a3a3a3", fg_color="#181818", border_width=0)
-        self.progress_view.grid(row=1, column=0, padx=14, pady=8, sticky="nsew")
-        bottom = ctk.CTkFrame(panel, fg_color="transparent")
-        bottom.grid(row=2, column=0, padx=14, pady=(0, 14), sticky="ew")
+        avatar_card = ctk.CTkFrame(main, fg_color="#0c1625", corner_radius=24, border_width=1, border_color="#173954")
+        avatar_card.grid(row=1, column=0, padx=30, pady=(10, 14), sticky="nsew")
+        avatar_card.grid_columnconfigure(0, weight=1)
+        avatar_card.grid_rowconfigure(0, weight=1)
+        stage = ctk.CTkFrame(avatar_card, fg_color="#08111e", corner_radius=20)
+        stage.grid(row=0, column=0, padx=18, pady=18, sticky="nsew")
+        stage.grid_columnconfigure(0, weight=1)
+        stage.grid_rowconfigure(0, weight=1)
+        asset = Path(__file__).resolve().parent.parent / "assets" / "jarvis_hologram_reference.webp"
+        try:
+            image = Image.open(asset).convert("RGBA")
+            width, height = image.size
+            image = image.crop((int(width * 0.39), int(height * 0.02), width, int(height * 0.99)))
+            avatar_size = 380
+            self.avatar_image = ctk.CTkImage(light_image=image, dark_image=image, size=(avatar_size, avatar_size))
+            self.avatar_label = ctk.CTkLabel(stage, text="", image=self.avatar_image)
+        except Exception:
+            self.avatar_label = ctk.CTkLabel(stage, text="JARVIS", text_color="#5de9ff", font=ctk.CTkFont(size=46, weight="bold"))
+        self.avatar_label.grid(row=0, column=0, padx=20, pady=12)
+        self.mouth_label = ctk.CTkLabel(stage, text="◡", text_color="#8af3ff", fg_color="transparent", font=ctk.CTkFont(size=26, weight="bold"))
+        self.mouth_label.place(relx=0.51, rely=0.77, anchor="center")
+        self.avatar_state = ctk.CTkLabel(avatar_card, text="JARVIS  •  GOTOWY", text_color="#68e9ff", font=ctk.CTkFont(size=12, weight="bold"))
+        self.avatar_state.grid(row=1, column=0, pady=(0, 4))
+        ctk.CTkLabel(avatar_card, textvariable=self.task_text, text_color="#7f9aae", anchor="center", wraplength=900).grid(row=2, column=0, padx=20, pady=(0, 14), sticky="ew")
+
+        chat_card = ctk.CTkFrame(main, fg_color="#0c1625", corner_radius=20, border_width=1, border_color="#173954")
+        chat_card.grid(row=2, column=0, padx=30, pady=(0, 12), sticky="nsew")
+        chat_card.grid_columnconfigure(0, weight=1)
+        chat_card.grid_rowconfigure(0, weight=1)
+        self.chat = ctk.CTkTextbox(chat_card, state="disabled", font=ctk.CTkFont(size=14), fg_color="#0c1625", border_width=0, wrap="word", text_color="#d8edf5")
+        self.chat.grid(row=0, column=0, padx=22, pady=(14, 8), sticky="nsew")
+        self.progress_view = ctk.CTkTextbox(chat_card, state="disabled", height=64, font=ctk.CTkFont(size=11), text_color="#7190a5", fg_color="#08111e", border_width=0)
+        self.progress_view.grid(row=1, column=0, padx=22, pady=(0, 8), sticky="ew")
+        bottom = ctk.CTkFrame(main, fg_color="transparent")
+        bottom.grid(row=3, column=0, padx=30, pady=(0, 6), sticky="ew")
         bottom.grid_columnconfigure(0, weight=1)
-        self.input = ctk.CTkEntry(bottom, placeholder_text="Napisz wiadomość do Jarvisa…", height=46, fg_color="#303030", border_color="#4a4a4a")
+        self.input = ctk.CTkEntry(bottom, placeholder_text="Napisz, co mam zrobić…", height=52, fg_color="#101f32", border_color="#26516f", corner_radius=16)
         self.input.grid(row=0, column=0, sticky="ew")
         self.input.bind("<Return>", lambda _: self.send())
-        self.send_button = ctk.CTkButton(bottom, text="Wyślij", width=100, height=44, fg_color="#3b82f6", hover_color="#2563eb", command=self.send)
+        self.send_button = ctk.CTkButton(bottom, text="WYŚLIJ  ➤", width=126, height=50, corner_radius=15, fg_color="#176bdb", hover_color="#2588ff", command=self.send)
         self.send_button.grid(row=0, column=1, padx=(10, 0))
+        ctk.CTkLabel(main, textvariable=self.footer_text, text_color="#5d7892", font=ctk.CTkFont(size=10), anchor="w").grid(row=4, column=0, padx=30, pady=(0, 12), sticky="w")
 
-        ctk.CTkLabel(self, textvariable=self.footer_text, text_color="#8f8f8f").grid(row=2, column=0, columnspan=2, padx=18, pady=8, sticky="w")
+    def _nav_button(self, parent, row, text, command):
+        ctk.CTkButton(parent, text=text, height=38, anchor="w", fg_color="transparent", hover_color="#14263b", text_color="#b7cfdd", command=command).grid(row=row, column=0, padx=12, pady=2, sticky="ew")
+
+    def focus_chat(self):
+        self.input.focus_set()
 
     def build_menu(self):
         style = {"tearoff": 0, "bg": "#0d1420", "fg": "#d6e4ee", "activebackground": "#27405c", "activeforeground": "#ffffff", "bd": 0}
@@ -775,6 +821,7 @@ class JarvisGUI(ctk.CTk):
         self.busy = True
         self.send_button.configure(state="disabled")
         self.state_text.set("PRACUJE")
+        self.set_avatar_state("MYŚLĘ", "myślę")
         self.task_text.set(message[:180])
         threading.Thread(target=self.process, args=(message,), daemon=True).start()
 
@@ -789,6 +836,13 @@ class JarvisGUI(ctk.CTk):
         self.write("JARVIS", answer)
         self.busy = False
         self.send_button.configure(state="normal")
+        prefs = user_settings.load()
+        if prefs.get("voice_output") == "on" and local_speech.available():
+            self.set_avatar_state("MÓWIĘ", "mówię")
+            self.speaking = True
+            threading.Thread(target=self._speak_answer, args=(answer,), daemon=True).start()
+        else:
+            self.set_avatar_state("GOTOWY", "gotowy")
         pending = task_runtime.latest_pending()
         if pending:
             self.state_text.set("OCZEKUJE NA AKCEPTACJĘ")
@@ -802,12 +856,41 @@ class JarvisGUI(ctk.CTk):
             self.state_text.set("ZATRZYMANO / SPRAWDŹ" if state == "blocked" else "WYMAGA WERYFIKACJI" if state == "needs_review" else "ZAKOŃCZONE" if state == "done" else "GOTOWY")
             self.task_text.set(current.get("goal", "Ostatnie zadanie zakończone")[:180] if current else "Ostatnie zadanie zakończone")
 
+    def _speak_answer(self, answer):
+        try:
+            local_speech.speak(str(answer)[:5000])
+        finally:
+            self.after(0, self._speech_finished)
+
+    def _speech_finished(self):
+        self.speaking = False
+        if not self.busy:
+            self.set_avatar_state("GOTOWY", "gotowy")
+
+    def set_avatar_state(self, label, mode):
+        try:
+            self.avatar_state.configure(text=f"JARVIS  •  {label}", text_color="#65e8ff" if mode != "gotowy" else "#68e9ff")
+        except (AttributeError, tk.TclError):
+            pass
+
     def stop(self):
         self.jarvis.run_skill("emergency_stop", "stop")
         self.state_text.set("ZATRZYMANY")
         self.write("SYSTEM", "Aktywowano awaryjne zatrzymanie. Bieżący krok zewnętrzny może już być w toku.")
 
     def pulse(self):
+        self.avatar_phase = (self.avatar_phase + 1) % 4
+        if getattr(self, "speaking", False):
+            mouths = ("—", "◡", "○", "◠")
+            try:
+                self.mouth_label.configure(text=mouths[self.avatar_phase], text_color="#c4fbff")
+            except (AttributeError, tk.TclError):
+                pass
+        elif getattr(self, "mouth_label", None) is not None:
+            try:
+                self.mouth_label.configure(text="◡", text_color="#8af3ff")
+            except (AttributeError, tk.TclError):
+                pass
         self.after(420, self.pulse)
 
 

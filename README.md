@@ -32,6 +32,8 @@ Open **Menu → Ustawienia modelu → Zarządzaj modelami Ollama**. Jarvis can u
 
 The desktop menu includes local personalization, a durable task center, a reviewed skill/plugin installer, public API discovery and explicit connector metadata. Personalization covers language, display theme, accent, font scale, compact layout, notifications and voice preferences. API discovery is read-only research; preparing a connector stores only metadata and never enables an unknown service or stores credentials automatically.
 
+The desktop cockpit uses a Polish-first layout with left navigation, a central holographic Jarvis face, a conversation panel below the face, task state chips and a composer at the bottom. The supplied hologram reference is stored in `assets/jarvis_hologram_reference.webp`. When local voice output is enabled, `agent/local_speech.py` uses a free Windows SAPI/pyttsx3 voice and animates the mouth indicator while Jarvis speaks; no cloud TTS key is required.
+
 For a product task, Jarvis can combine `market_research`, `offer_analysis` and `campaign_pack`: research sources, compare complete cost data and margins, then prepare a product listing plus Instagram, Facebook and TikTok drafts. These skills do not publish or buy anything; an approved, tested connector is required for each external action.
 
 The skill list includes both working tools and early-stage helpers. A skill's presence in the folder does not by itself mean the whole capability is finished. Start new work with [the current project status](PROJECT_STATUS_CURRENT.md), then see [the agreed Jarvis vision](JARVIS_VISION.md). Historical source documents are kept outside the active project archive and are not standing instructions.

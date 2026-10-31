@@ -44,6 +44,14 @@ vault i aktualne dokumenty. Stare plany, audyty, historyczne materiały, obcy ka
 snapshoty, stare logi i pliki robocze przeniesiono odwracalnie do `C:\JARVIS_ONE_ARCHIVE_20261031`.
 Manifest archiwum opisuje przeniesione elementy; nie są one instrukcjami dla JARVISA.
 
+## Dashboard holograficzny — wdrożony
+
+Główne okno `agent/agent_gui.py` ma polski dashboard z lewą nawigacją, centralną kartą hologramu,
+rozmową bezpośrednio pod głową i polem poleceń na dole. Asset `assets/jarvis_hologram_reference.webp`
+jest lokalną bazą twarzy JARVISA. Przy włączonym `voice_output` moduł `agent/local_speech.py`
+korzysta z bezpłatnego Windows SAPI albo lokalnego `pyttsx3`, a GUI animuje wskaźnik ust w czasie
+mówienia. Nie używa płatnego API głosu. Import GUI i testy dymne po zmianie zakończyły się sukcesem.
+
 ## O co chodzi w Jarvisie
 
 Jarvis ma byc uniwersalnym pomocnikiem pracujacym na komputerze i w internecie. Ma rozumiec zwykle polecenia, zdobywac potrzebna wiedze, przygotowywac plan, wykonywac uzgodnione kroki, naprawiac bledy i pokazywac dowody rezultatu. Nie jest z gory systemem do sklepu, tradingu, SaaS ani zadnej innej branzy. To przyklady trudnych zadan, ktore Jarvis ma kiedys umiec wykonac na zlecenie. Jarvis nie steruje inteligentnym domem.
